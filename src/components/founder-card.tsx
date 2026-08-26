@@ -37,6 +37,28 @@ export function FounderCard({ listingId }: { listingId?: string | null }) {
           {founder.onBoard}
         </Link>
       ) : null}
+
+      <p className="mt-6 text-xs font-medium uppercase tracking-wide text-muted">{founder.sitesKicker}</p>
+      <ul className="mt-3 flex flex-col gap-2">
+        {founder.sites.map((site) => (
+          <li key={site.href}>
+            <a
+              href={site.href}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="flex items-start gap-3 rounded-md px-1 py-1.5 text-sm transition-colors duration-150 hover:bg-surface"
+            >
+              <span className="mt-0.5 w-6 shrink-0 text-center leading-none" aria-hidden>
+                {site.mark}
+              </span>
+              <span className="min-w-0">
+                <span className="font-medium text-fg">{site.name}</span>
+                <span className="mt-0.5 block text-muted">{site.line}</span>
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
     </article>
   );
 }

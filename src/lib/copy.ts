@@ -275,6 +275,27 @@ export const founder = {
   line: "He shipped the board. He paid to be on it. He asked to be in the footer. Gravity does not make an exception.",
   onBoard: "On the ruler, like everyone else",
   x: "The costume is the handle. The receipt is the board.",
+  sitesKicker: "Also shipping. The algorithm still doesn't care.",
+  sites: [
+    {
+      mark: "🧀",
+      name: "Brieform",
+      href: "https://brieform.app",
+      line: "Forms your AI builds, publishes, and reads.",
+    },
+    {
+      mark: "⚡",
+      name: "DirectoryFast",
+      href: "https://directoryfa.st",
+      line: "A niche directory this afternoon.",
+    },
+    {
+      mark: "⚔️",
+      name: "Indiecraft",
+      href: "https://indiecraft.quest",
+      line: "The founders' armory.",
+    },
+  ],
 } as const;
 
 export function badgeFor(cents: number): string {

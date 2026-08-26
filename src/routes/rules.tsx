@@ -1,17 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/app-shell";
-import { FounderCard } from "@/components/founder-card";
-import { getBoard } from "@/lib/board";
-import { copy, founder, rules } from "@/lib/copy";
+import { copy, rules } from "@/lib/copy";
 import { ogAltText, ogText } from "@/lib/og/links";
 import { seoHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/rules")({
-  loader: async () => {
-    const rows = await getBoard({ data: { window: "all" } });
-    const listing = rows.find((row) => row.targetKey === founder.targetKey);
-    return { listingId: listing?.id ?? null };
-  },
   head: () =>
     seoHead({
       title: `${copy.rulesTitle} — ${copy.siteName}`,
@@ -24,7 +17,6 @@ export const Route = createFileRoute("/rules")({
 });
 
 function RulesPage() {
-  const { listingId } = Route.useLoaderData();
   return (
     <AppShell>
       <h1 className="font-display text-4xl leading-tight text-fg">{copy.rulesTitle}</h1>
@@ -37,9 +29,6 @@ function RulesPage() {
           </li>
         ))}
       </ol>
-      <div className="mt-10">
-        <FounderCard listingId={listingId} />
-      </div>
     </AppShell>
   );
 }
