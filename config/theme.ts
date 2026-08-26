@@ -22,8 +22,12 @@ export const theme = {
   displayFont: "Instrument Serif, Iowan Old Style, Palatino, Georgia, serif",
 
   meter: {
-    /** Drawn at the leading edge of the fill. Any character. '' to disable. */
-    cap: '🍆',
+    /** Shown left of the length figure. '' to disable. */
+    prefix: '🍆',
+    /** Tip mark on the leading edge of the fill. */
+    tip: '→',
+    /** Soft circular base at the start of the bar (same colour as fill). */
+    baseHalo: true,
     /** Smallest visible fill, so a $5 listing is still a mark and not nothing. */
     minPx: 18,
     /** Track width cap in px. 0 means no cap: the track fills the row. */
