@@ -7,15 +7,15 @@
 const usd = (dollars: number) => `$${dollars.toLocaleString('en-US')}`
 
 export const copy = {
-  siteName: 'length.lol',
-  domain: 'length.lol',
+  siteName: 'epenis.lol',
+  domain: 'epenis.lol',
 
-  tagline: 'The leaderboard that is honest about what it measures.',
+  tagline: 'Rank is length. Pay to grow.',
   description:
-    'Pay money, get length. The longest listing sits at the top. No algorithm, no quality score, no appeal.',
+    'The only leaderboard that is honest about what it measures. $1 = 1 cm. The longest sits on top. No algorithm, no cope, no appeal.',
 
-  ctaPrimary: 'Measure me',
-  ctaRaise: 'Add length',
+  ctaPrimary: 'Grow me',
+  ctaRaise: 'Add more cm',
 
   unitName: 'cm',
   unitLabel: (n: number) => `${n.toLocaleString('en-US')} cm`,
@@ -23,9 +23,9 @@ export const copy = {
   boardToday: 'Today',
   boardAllTime: 'All-time',
 
-  claimNumberOne: (dollars: number) => `#1 costs ${usd(dollars)} right now`,
+  claimNumberOne: (dollars: number) => `dethroning #1 costs ${usd(dollars)} right now`,
   newListingHint: (dollars: number) =>
-    `New listings start at ${usd(dollars)}. $1 buys 1 cm. Whole dollars only.`,
+    `New entries start at ${usd(dollars)}. $1 buys 1 cm. Whole dollars only. No feelings.`,
 
   rulesTitle: 'Rules',
   rules: [
@@ -43,23 +43,22 @@ export const copy = {
   ],
 
   about:
-    'A pay-to-rank advertising board. You buy a position, everyone sees exactly what it cost you, and the only leverage anyone has is a card. It is an auction wearing a joke as a hat.',
+    'A public auction for length. You buy centimetres, everyone sees exactly what it cost you, and the only leverage anyone has is a credit card. It is an advertising board wearing a joke as a hat.',
 
   footer: 'A public auction for attention. Not affiliated with anyone measured.',
 
-  ogTitle: 'length.lol — pay to be long',
-  ogDescription: 'A public leaderboard ranked only by money paid. $1 = 1 cm.',
+  ogTitle: 'epenis.lol — rank is length',
+  ogDescription: 'Pay money, get length. The longest listing sits at the top. $1 = 1 cm.',
 
   successTitle: 'Paid. You grew.',
-  cancelTitle: 'Cancelled. You stayed exactly the same.',
+  cancelTitle: 'Cancelled. You stayed exactly the same size.',
 
-  /** Everything below is UI chrome, still skinnable, still not hardcoded. */
   ui: {
-    boardEmpty: 'nobody has paid yet. #1 costs $5',
+    boardEmpty: 'nobody has paid yet. #1 costs $5. tragic.',
     rank: 'Rank',
     clicks: (n: number) => `${n.toLocaleString('en-US')} clicks`,
     total: (dollars: number) => usd(dollars),
-    justPaid: 'Payment received. This board updates the moment Stripe confirms.',
+    justPaid: 'Payment received. The board updates the moment Stripe confirms.',
     backToBoard: 'Back to the board',
     detailTitle: (name: string) => `${name} on ${copy.siteName}`,
     navRules: 'Rules',
@@ -82,7 +81,7 @@ export const copy = {
     quoteCharge: (dollars: number) => `You will be charged ${usd(dollars)} now.`,
     quoteCurrent: (dollars: number) => `This listing has already paid ${usd(dollars)}.`,
     quoteRank: (rank: number) => `That buys rank #${rank}.`,
-    noRefunds: 'Payments are final.',
+    noRefunds: 'Payments are final. No refunds, no cope.',
   },
 
   errors: {

@@ -5,46 +5,47 @@
 
 export const theme = {
   colors: {
-    bg: '#f3ece1',
-    ink: '#161311',
-    muted: '#6d6357',
-    accent: '#cf2233',
-    accentInk: '#fdf9f3',
-    track: '#e2d8c8',
-    fill: '#cf2233',
-    danger: '#9d1420',
-    card: '#fbf7f0',
+    bg: '#0c0a0e',
+    ink: '#f4f0f8',
+    muted: '#8a8299',
+    accent: '#ff2d6a',
+    accentInk: '#0c0a0e',
+    track: '#1c1824',
+    fill: '#ff2d6a',
+    danger: '#ff5c7a',
+    card: '#15121c',
   },
 
-  radius: '10px',
+  radius: '6px',
 
   font: "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif",
 
   meter: {
     /** Drawn at the leading edge of the fill. Any character. '' to disable. */
-    cap: '»',
+    cap: '›',
     /** Smallest visible fill, so a $5 listing is still a mark and not nothing. */
-    minPx: 14,
+    minPx: 16,
     /** Track width cap in px. 0 means no cap: the track fills the row. */
     maxPx: 0,
     /** Bar height, and the taller one used for the top ranks. */
-    heightPx: 14,
-    topHeightPx: 22,
+    heightPx: 12,
+    topHeightPx: 26,
     /** How many ranks get the tall bar and the big number. */
     topRanks: 3,
     /** Font size of the length figure, and the big one for the top ranks. */
     valuePx: 15,
-    topValuePx: 28,
+    topValuePx: 32,
     /** Fill growth animation. */
-    growMs: 650,
+    growMs: 500,
   },
 
   /** Thresholds are cents, ascending. The highest one reached wins. */
   badges: [
-    { minCents: 0, label: 'new' },
+    { minCents: 0, label: 'tiny' },
     { minCents: 500, label: 'warming up' },
     { minCents: 2000, label: 'serious' },
-    { minCents: 10000, label: 'committed' },
+    { minCents: 10000, label: 'compensating' },
+    { minCents: 50000, label: 'unwell' },
   ],
 } as const
 
