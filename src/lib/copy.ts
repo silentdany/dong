@@ -19,11 +19,13 @@ export const copy = {
   todayKicker: "24 hours. Then gravity.",
   todayDescription:
     "Who paid recently enough to still have something up. Same ruler. Same centimetres. The rest already went soft.",
-  todayEmpty: "Nobody paid in the last 24 hours. The board went soft. $5 and you're today's only honest one.",
+  todayEmpty:
+    "Nobody paid in the last 24 hours. The board went soft. $5 and you're today's only honest one.",
   todayMetaTitle: "Today — epenis.lol",
   todayMetaDescription:
     "Who is still up on epenis.lol in the last 24 hours. $1 = 1 cm. Gravity is 1 cm an hour. Pay or go soft.",
-  rulesMetaDescription: "How epenis.lol works. $1 = 1 cm. It falls 1 cm an hour. No refunds. No costume.",
+  rulesMetaDescription:
+    "How epenis.lol works. $1 = 1 cm. It falls 1 cm an hour. No refunds. No costume.",
   aboutMetaDescription: "Why epenis.lol exists. Rank was always money. We named the centimetres.",
   duelMetaTitle: "Duel — epenis.lol",
   duelMetaDescription:
@@ -41,11 +43,14 @@ export const copy = {
   raiseMark: "📏",
   takeTop: (dollars: number) => `${usd(dollars)} to stop pretending you're #1`,
   leaderLine: (cm: number) =>
-    cm > 0 ? `#1 is holding ${cm} cm and it is already going soft.` : "Nobody has paid. The sock is still on.",
-  drawerHint: "$5 to exist. $1 = 1 cm. Then it droops 1 cm an hour. Whole dollars. No costume discount.",
-  raiseHint: "Handle and name stay put. You pay the difference. The one line is fair game — that's the troll.",
-  empty:
-    "Empty board. Five dollars and you're the only honest one. That's the whole joke.",
+    cm > 0
+      ? `#1 is holding ${cm} cm and it is already going soft.`
+      : "Nobody has paid. The sock is still on.",
+  drawerHint:
+    "$5 to exist. $1 = 1 cm. Then it droops 1 cm an hour. Whole dollars. No costume discount.",
+  raiseHint:
+    "Handle and name stay put. You pay the difference. The one line is fair game — that's the troll.",
+  empty: "Empty board. Five dollars and you're the only honest one. That's the whole joke.",
   rulesNav: "Rules",
   aboutNav: "About",
   rulesTitle: "The rules",
@@ -54,8 +59,7 @@ export const copy = {
   noRefunds: "Final. No refunds. Pretending is free. This is not.",
   demoPay:
     "This preview does not charge a card. Confirm and the centimetres land on this name anyway.",
-  cardNext:
-    "Card next. Centimetres land on this name when Stripe confirms — never the other guy.",
+  cardNext: "Card next. Centimetres land on this name when Stripe confirms — never the other guy.",
   confirmPay: "Pay for real",
   confirmTitle: (cm: number, name?: string) =>
     name ? `${name} at ${cm} cm. That's the receipt.` : `Drop the act at ${cm} cm?`,
@@ -177,7 +181,8 @@ export const copy = {
   missing: "No such listing. Maybe it was still pretending.",
   duel: "Duel",
   duelMark: "⚔️",
-  duelKicker: "Free to open. Send the link. If they care, they pay. If they don't, they stay shorter in public.",
+  duelKicker:
+    "Free to open. Send the link. If they care, they pay. If they don't, they stay shorter in public.",
   duelVs: "vs",
   duelAhead: (name: string, cm: number) => `${name} is ${cm} cm longer. That's the screenshot.`,
   duelGap: (cm: number) => `+${cm.toLocaleString("en-US")}`,
@@ -195,6 +200,13 @@ export const copy = {
   duelCatchUp: "Pay to not be shorter",
   duelOpen: "Make the link",
   duelChallenge: (name: string) => `Measure up vs ${name}`,
+
+  /** Sharing. X renders the OG card, so the text carries attitude, not numbers. */
+  shareOnX: "Post on X",
+  shareListing: (name: string, cm: number) =>
+    `${name} is holding ${cm} cm on ${copy.siteName}. It falls 1 cm an hour.`,
+  shareDuel: (a: string, b: string) =>
+    `${a} vs ${b} on ${copy.siteName}. $1 = 1 cm. One of them paid more.`,
   duelWho: "Which one is your little secret?",
   duelNew: "Still lurking, apparently",
   duelAs: (name: string) => `Send it as ${name}`,
@@ -216,7 +228,8 @@ export const copy = {
     winnerChip: "Longer",
     loserChip: "Still pretending",
     tieChip: "Dead even",
-    verdict: (winner: string, times: string) => `${winner} is ${times}× longer. That's the screenshot.`,
+    verdict: (winner: string, times: string) =>
+      `${winner} is ${times}× longer. That's the screenshot.`,
     verdictClose: (winner: string, cm: number) =>
       cm > 0 ? `${winner} is ${cm} cm longer. That's the screenshot.` : `${winner} leads. Barely.`,
     verdictTie: "Same size. Deeply awkward.",
@@ -238,7 +251,9 @@ export const quoteText = {
     const chargeLine = `You will be charged $${charge}.`;
     const currentLine = current > 0 ? ` Current total $${current}.` : "";
     const rankLine =
-      rank === 1 ? " You take #1. Enjoy it while it lasts." : ` Rank #${rank}. Still a little costume left.`;
+      rank === 1
+        ? " You take #1. Enjoy it while it lasts."
+        : ` Rank #${rank}. Still a little costume left.`;
     return `${chargeLine}${currentLine}${rankLine}`;
   },
 };

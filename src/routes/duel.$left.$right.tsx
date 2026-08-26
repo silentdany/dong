@@ -6,6 +6,7 @@ import { AppShell } from "@/components/app-shell";
 import { BidForm } from "@/components/bid-form";
 import { LengthMeter } from "@/components/length-meter";
 import { ListingLogo } from "@/components/listing-logo";
+import { ShareOnX } from "@/components/share-on-x";
 import { Button } from "@/components/ui/button";
 import { getLeader, getListing } from "@/lib/board";
 import type { ListingRow } from "@/lib/board";
@@ -72,9 +73,7 @@ function snapOf(row: ListingRow) {
 }
 
 function targetOf(row: ListingRow) {
-  return row.targetType === "handle"
-    ? `@${row.targetKey.replace(/^handle:/, "")}`
-    : row.targetUrl;
+  return row.targetType === "handle" ? `@${row.targetKey.replace(/^handle:/, "")}` : row.targetUrl;
 }
 
 function DuelSide({
@@ -118,7 +117,9 @@ function DuelSide({
         />
         <div className="min-w-0">
           {big ? (
-            <p className="text-xs font-medium uppercase tracking-wide text-fill-text">{copy.duelHolding}</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-fill-text">
+              {copy.duelHolding}
+            </p>
           ) : null}
           <h2
             className={cn(
@@ -214,15 +215,20 @@ function DuelPage() {
         {copy.duelMark} {copy.duel}
       </p>
       <h1 className="mt-2 font-display text-3xl leading-[1.05] text-fg sm:text-4xl">
-        {left.displayName}{" "}
-        <span className="text-muted">{copy.duelVs}</span> {right.displayName}
+        {left.displayName} <span className="text-muted">{copy.duelVs}</span> {right.displayName}
       </h1>
       <p className="mt-2 text-sm text-muted">{copy.duelKicker}</p>
 
-      <Button type="button" variant="outline" className="mt-4 h-11" onClick={() => void copyLink()}>
-        <Copy className="size-4" />
-        {copied ? copy.duelCopied : copy.duelCopy}
-      </Button>
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <Button type="button" variant="outline" className="h-11" onClick={() => void copyLink()}>
+          <Copy className="size-4" />
+          {copied ? copy.duelCopied : copy.duelCopy}
+        </Button>
+        <ShareOnX
+          text={copy.shareDuel(left.displayName, right.displayName)}
+          path={`/duel/${left.id}/${right.id}`}
+        />
+      </div>
 
       {!tied ? (
         <div className="mt-8 rounded-lg bg-elevated px-4 py-6 text-center ring-1 ring-fill/40">
