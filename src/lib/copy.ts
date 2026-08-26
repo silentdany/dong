@@ -206,7 +206,7 @@ export const copy = {
   shareListing: (name: string, cm: number) =>
     `Stop pretending. It was always about size. ${name} is ${cm} cm. What's yours?`,
   shareDuel: (a: string, aCm: number, b: string, bCm: number) =>
-    `Stop pretending. It was always about size. ${a}: ${aCm} cm. ${b}: ${bCm} cm. Tag the short one.`,
+    `Stop pretending. It was always about size. ${a}: ${aCm} cm. ${b}: ${bCm} cm. Choose who has the bigger.`,
   duelWho: "Which one is your little secret?",
   duelNew: "Still lurking, apparently",
   duelAs: (name: string) => `Send it as ${name}`,
