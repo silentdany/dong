@@ -225,7 +225,12 @@ function DuelPage() {
           {copied ? copy.duelCopied : copy.duelCopy}
         </Button>
         <ShareOnX
-          text={copy.shareDuel(left.displayName, right.displayName)}
+          text={copy.shareDuel(
+            left.displayName,
+            lengthCm(leftLive),
+            right.displayName,
+            lengthCm(rightLive),
+          )}
           path={`/duel/${left.id}/${right.id}`}
         />
       </div>
