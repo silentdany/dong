@@ -107,38 +107,133 @@ async function loadListingByKey(targetKey: string): Promise<DbListing | null> {
   return rows[0] ?? null;
 }
 
-export async function creditPayment(input: {
+export type CreditResult =
+  | { ok: true; duplicate: boolean }
+  /** The database was unreachable. The money is real — this must be retried. */
+  | { ok: false; code: "db-unavailable" }
+  /** The listing is gone and nothing in the session says how to rebuild it. */
+  | { ok: false; code: "listing-missing" };
+
+export type CreditInput = {
   listingId: string;
   amountCents: number;
   stripeSessionId: string;
   description?: string;
-}): Promise<{ ok: true; duplicate: boolean } | { ok: false; code: "db-unavailable" }> {
+  /**
+   * Session metadata. A checkout can outlive the listing it was bound to (a
+   * board reset, a manual delete), and `payments.listing_id` is a foreign key,
+   * so without these the credit is a hard error on money already taken.
+   */
+  targetKey?: string;
+  displayName?: string;
+};
+
+/** Postgres foreign_key_violation: the listing this payment points at is gone. */
+function isMissingListing(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    (error as { code?: string }).code === "23503"
+  );
+}
+
+/** A target key already encodes the type and the URL — parse it back out. */
+function targetFromKey(targetKey: string) {
+  if (targetKey.startsWith("handle:")) return parseTarget(`@${targetKey.slice("handle:".length)}`);
+  if (targetKey.startsWith("url:")) return parseTarget(targetKey.slice("url:".length));
+  return null;
+}
+
+async function applyCredit(
+  sql: Awaited<ReturnType<typeof getSql>>,
+  listingId: string,
+  input: CreditInput,
+): Promise<{ ok: true; duplicate: boolean }> {
+  const description = input.description ?? "";
+  const updated = await sql<{ id: string }>`
+    with ins as (
+      insert into payments (id, listing_id, amount_cents, stripe_session_id, created_at)
+      values (${newId("pay")}, ${listingId}, ${input.amountCents}, ${input.stripeSessionId}, now())
+      on conflict (stripe_session_id) do nothing
+      returning listing_id, amount_cents
+    )
+    update listings
+    set all_time_cents = listings.all_time_cents + ins.amount_cents,
+        description = case
+          when ${description} <> '' then ${description}
+          else listings.description
+        end,
+        updated_at = now()
+    from ins
+    where listings.id = ins.listing_id
+    returning listings.id
+  `;
+  return { ok: true, duplicate: updated.length === 0 };
+}
+
+/**
+ * Find something to credit when the bound listing has been deleted. The same
+ * target listed again under a new id wins — the money belongs to that entry.
+ * Otherwise the row is rebuilt under its original id so the binding still holds.
+ */
+async function rebindListing(
+  sql: Awaited<ReturnType<typeof getSql>>,
+  input: CreditInput,
+): Promise<string | null> {
+  const targetKey = input.targetKey?.trim();
+  if (!targetKey) return null;
+
+  const existing = await sql<{ id: string }>`
+    select id from listings where target_key = ${targetKey} limit 1
+  `;
+  if (existing[0]) return existing[0].id;
+
+  const parsed = targetFromKey(targetKey);
+  if (!parsed) return null;
+  // Rebuilt at zero: applyCredit adds this payment on top, so a listing that
+  // comes back owns exactly what it can prove it paid.
+  await sql`
+    insert into listings (
+      id, display_name, target_type, target_key, target_url, description,
+      all_time_cents, click_count, hidden, created_at, updated_at
+    ) values (
+      ${input.listingId}, ${input.displayName?.trim() || parsed.label}, ${parsed.type},
+      ${targetKey}, ${parsed.url}, ${input.description ?? ""}, 0, 0, false, now(), now()
+    )
+    on conflict (id) do nothing
+  `;
+  return input.listingId;
+}
+
+export async function creditPayment(input: CreditInput): Promise<CreditResult> {
   if (!input.listingId || input.amountCents < 1 || !input.stripeSessionId) {
     return { ok: true, duplicate: true };
   }
-  const payId = newId("pay");
-  const description = input.description ?? "";
   try {
     const sql = await getSql();
-    const updated = await sql<{ id: string }>`
-      with ins as (
-        insert into payments (id, listing_id, amount_cents, stripe_session_id, created_at)
-        values (${payId}, ${input.listingId}, ${input.amountCents}, ${input.stripeSessionId}, now())
-        on conflict (stripe_session_id) do nothing
-        returning listing_id, amount_cents
-      )
-      update listings
-      set all_time_cents = listings.all_time_cents + ins.amount_cents,
-          description = case
-            when ${description} <> '' then ${description}
-            else listings.description
-          end,
-          updated_at = now()
-      from ins
-      where listings.id = ins.listing_id
-      returning listings.id
-    `;
-    return { ok: true, duplicate: updated.length === 0 };
+    try {
+      return await applyCredit(sql, input.listingId, input);
+    } catch (error) {
+      if (!isMissingListing(error)) throw error;
+      const listingId = await rebindListing(sql, input);
+      if (!listingId) {
+        // Retrying cannot fix this, so the log line has to carry everything a
+        // manual credit needs. Stripe is told to stop rather than to loop.
+        console.error("[credit] orphaned payment, nothing to rebind", {
+          stripeSessionId: input.stripeSessionId,
+          listingId: input.listingId,
+          amountCents: input.amountCents,
+          targetKey: input.targetKey ?? null,
+        });
+        return { ok: false, code: "listing-missing" };
+      }
+      console.warn("[credit] rebound to listing", {
+        stripeSessionId: input.stripeSessionId,
+        from: input.listingId,
+        to: listingId,
+      });
+      return await applyCredit(sql, listingId, input);
+    }
   } catch (error) {
     console.error("[credit] failed", error);
     return { ok: false, code: "db-unavailable" };
@@ -241,8 +336,12 @@ export async function startCheckout(input: CheckoutInput): Promise<CheckoutResul
         amountCents: chargeCents,
         stripeSessionId: `demo_${newId("sess")}`,
         description: input.description ?? "",
+        targetKey: parsed.key,
+        displayName: name,
       });
-      if (!credited.ok) return credited;
+      // The listing was reserved a line ago, so it cannot be the missing one --
+      // any failure here is the write itself.
+      if (!credited.ok) return { ok: false, code: "db-unavailable" };
       return { ok: true, listingId, demo: true };
     }
 
@@ -267,6 +366,7 @@ export async function startCheckout(input: CheckoutInput): Promise<CheckoutResul
       metadata: {
         listingId,
         targetKey: parsed.key,
+        displayName: (existing?.display_name ?? name).slice(0, 140),
         chargeCents: String(chargeCents),
         description,
         returnPath: successPath,
@@ -289,20 +389,34 @@ export async function startCheckout(input: CheckoutInput): Promise<CheckoutResul
   }
 }
 
-export async function fulfillStripeSession(session: StripeLikeSession): Promise<void> {
-  if (session.payment_status && session.payment_status !== "paid") return;
+/**
+ * `retry` is the only bit the webhook needs: true means the credit failed for a
+ * reason that can pass, so Stripe must send the event again. Everything else --
+ * credited, already credited, not ours -- is settled and must not be retried.
+ */
+export type FulfillResult = { ok: true; credited: boolean } | { ok: false; retry: boolean };
+
+const NOTHING_TO_DO: FulfillResult = { ok: true, credited: false };
+
+export async function fulfillStripeSession(session: StripeLikeSession): Promise<FulfillResult> {
+  if (session.payment_status && session.payment_status !== "paid") return NOTHING_TO_DO;
   const listingId = listingIdFromStripeSession(session);
   const chargeCents = parseChargeCents(session.metadata);
-  if (!listingId || !chargeCents) return;
-  if (!expectedChargeMatchesPaid(session.amount_total, chargeCents)) return;
+  if (!listingId || !chargeCents) return NOTHING_TO_DO;
+  if (!expectedChargeMatchesPaid(session.amount_total, chargeCents)) return NOTHING_TO_DO;
   const sessionId = session.id?.trim();
-  if (!sessionId) return;
-  await creditPayment({
+  if (!sessionId) return NOTHING_TO_DO;
+
+  const credited = await creditPayment({
     listingId,
     amountCents: chargeCents,
     stripeSessionId: sessionId,
     description: session.metadata?.description,
+    targetKey: session.metadata?.targetKey,
+    displayName: session.metadata?.displayName,
   });
+  if (credited.ok) return { ok: true, credited: !credited.duplicate };
+  return { ok: false, retry: credited.code === "db-unavailable" };
 }
 
 export async function fulfillCheckoutSessionId(

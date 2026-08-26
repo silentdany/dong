@@ -11,7 +11,13 @@ export const Route = createFileRoute("/api/stripe/webhook")({
         const event = constructStripeEvent(raw, signature);
         if (!event) return Response.json({ ok: false }, { status: 400 });
         if (event.type === "checkout.session.completed") {
-          await fulfillStripeSession(event.data.object);
+          const result = await fulfillStripeSession(event.data.object);
+          // A 200 tells Stripe the event is handled and it never sends it again.
+          // Acknowledging a failed credit is how a charge goes through with no
+          // centimetres behind it, so a retryable failure has to answer 5xx.
+          if (!result.ok && result.retry) {
+            return Response.json({ ok: false, retry: true }, { status: 500 });
+          }
         }
         return Response.json({ received: true });
       },
