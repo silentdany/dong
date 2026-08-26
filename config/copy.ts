@@ -62,6 +62,44 @@ export const copy = {
   ogTitle: 'Stop pretending. — epenis.lol',
   ogDescription: 'You already paid to be taller. We named the unit. $1 = 1 cm.',
 
+  /** Share cards. Every string that can end up on somebody else's timeline. */
+  og: {
+    unitRule: '$1 = 1 cm',
+    siteTag: 'Public receipt',
+    listingTag: (rank: number) => (rank > 0 ? `Rank #${rank}` : 'Listing'),
+    boardTag: (kind: 'today' | 'all-time') => (kind === 'all-time' ? 'All-time' : 'Last 24 hours'),
+    duelTag: 'Duel',
+    paidTag: 'Paid',
+    cancelledTag: 'Cancelled',
+    paid: (dollars: number) => `${usd(dollars)} paid`,
+    takeTop: (dollars: number) => `${usd(dollars)} to take #1`,
+    boardEmpty: 'Nobody has paid. The board is an empty costume rack.',
+    alt: {
+      site: (): string => `${copy.tagline} ${copy.siteName}: $1 = 1 cm.`,
+      board: (leader: string, cm: number) => `${leader} leads ${copy.siteName} at ${cm} cm.`,
+      listing: (name: string, cm: number) => `${name} measures ${cm} cm on ${copy.siteName}.`,
+      duel: (a: string, b: string) => `${a} vs ${b} on ${copy.siteName}.`,
+      text: (title: string) => `${title} — ${copy.siteName}`,
+    },
+  },
+
+  /** Head-to-head: two listings, one ruler. The share card the app is for. */
+  duel: {
+    tag: 'Duel',
+    title: (a: string, b: string) => `${a} vs ${b}`,
+    shareTitle: (a: string, b: string) => `${a} vs ${b} — ${copy.siteName}`,
+    winnerChip: 'Longer',
+    loserChip: 'Still pretending',
+    tieChip: 'Dead even',
+    verdict: (winner: string, times: string) => `${winner} is ${times}\u00d7 longer.`,
+    verdictClose: (winner: string, cm: number) =>
+      cm > 0 ? `${winner} leads by ${cm} cm. That is the whole argument.` : `${winner} leads. Barely.`,
+    verdictTie: 'Dead even. Two costumes, same size.',
+    verdictSolo: (winner: string) => `${winner} paid. The other one is still pretending.`,
+    flip: (dollars: number) => `${usd(dollars)} to flip it`,
+    flipNone: 'Nothing to flip. Nobody paid.',
+  },
+
   successTitle: 'Paid. That\'s the only screenshot that counts.',
   cancelTitle: 'Cancelled. You kept pretending. Classic.',
 

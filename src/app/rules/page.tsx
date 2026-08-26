@@ -1,7 +1,12 @@
 import type { Metadata } from 'next'
 import { copy } from '@config/copy'
+import { textCardMetadata } from '@/lib/og/links'
 
-export const metadata: Metadata = { title: copy.rulesTitle }
+export const metadata: Metadata = textCardMetadata({
+  tag: copy.ui.navRules,
+  title: copy.rulesTitle,
+  sub: copy.rulesKicker,
+})
 
 export default function RulesPage() {
   return (

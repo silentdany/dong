@@ -1,41 +1,75 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { cache } from 'react'
 import { copy } from '@config/copy'
 import { badgeFor } from '@config/theme'
 import BidForm from '@/components/BidForm'
 import RankMeter from '@/components/RankMeter'
 import { prisma } from '@/lib/db'
 import { leaderTotalCents } from '@/lib/board'
-import { lengthCm, minTotalCents, toDollars, todayCutoff } from '@/lib/ranking'
+import { targetLabel } from '@/lib/normalize'
+import { ogImage, ogListing } from '@/lib/og/links'
+import { costToTakeTopCents, lengthCm, minTotalCents, toDollars, todayCutoff } from '@/lib/ranking'
 import { relativeTime } from '@/lib/time'
 
 export const dynamic = 'force-dynamic'
 
 type Params = Promise<{ id: string }>
 
-async function getListing(id: string) {
+/** Cached so the share card and the page itself cost one query, not two. */
+const getListing = cache(async (id: string) => {
   const listing = await prisma.listing.findUnique({ where: { id } })
   if (!listing || listing.hidden || listing.allTimeCents <= 0) return null
   return listing
-}
+})
+
+const getLeader = cache((exceptId: string) => leaderTotalCents(exceptId))
+
+/** Same ordering the board uses: money first, then the older listing. */
+const getRank = cache(async (id: string) => {
+  const listing = await getListing(id)
+  if (!listing) return 0
+  const ahead = await prisma.listing.count({
+    where: {
+      hidden: false,
+      OR: [
+        { allTimeCents: { gt: listing.allTimeCents } },
+        { allTimeCents: listing.allTimeCents, createdAt: { lt: listing.createdAt } },
+      ],
+    },
+  })
+  return ahead + 1
+})
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { id } = await params
   const listing = await getListing(id)
   if (!listing) return { title: copy.errors.notFound }
 
+  const [leader, rank] = await Promise.all([getLeader(listing.id), getRank(listing.id)])
   const cm = lengthCm(listing.allTimeCents)
-  const target = listing.targetType === 'handle' ? `@${listing.targetKey.slice('handle:'.length)}` : listing.targetUrl
+  const ceiling = Math.max(listing.allTimeCents, leader ?? 0)
   const title = copy.ui.detailTitle(listing.displayName)
+  const description = listing.description || copy.ogDescription
+
+  const image = ogListing({
+    name: listing.displayName,
+    target: targetLabel(listing),
+    cm,
+    rank,
+    ratio: ceiling > 0 ? listing.allTimeCents / ceiling : 0,
+    badge: badgeFor(listing.allTimeCents),
+    desc: listing.description,
+    takeTop: Math.max(0, toDollars(costToTakeTopCents(leader ?? 0) - listing.allTimeCents)),
+  })
+  const images = [ogImage(image, copy.og.alt.listing(listing.displayName, cm))]
+
   return {
     title: listing.displayName,
-    description: listing.description || copy.ogDescription,
-    openGraph: {
-      title,
-      description: listing.description || copy.ogDescription,
-      images: [`/og?cm=${cm}&handle=${encodeURIComponent(target)}`],
-    },
+    description,
+    openGraph: { title, description, images },
+    twitter: { card: 'summary_large_image', title, description, images },
   }
 }
 
@@ -49,11 +83,11 @@ export default async function ListingPage({ params }: { params: Params }) {
       where: { listingId: listing.id, createdAt: { gte: todayCutoff() } },
       _sum: { amountCents: true },
     }),
-    leaderTotalCents(listing.id),
+    getLeader(listing.id),
   ])
 
   const todayCents = todaySum._sum.amountCents ?? 0
-  const target = listing.targetType === 'handle' ? `@${listing.targetKey.slice('handle:'.length)}` : listing.targetUrl
+  const target = targetLabel(listing)
   const nextTotal = toDollars(minTotalCents(listing.allTimeCents))
   const maxScoreCents = Math.max(listing.allTimeCents, leader ?? 0)
 

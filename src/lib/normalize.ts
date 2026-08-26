@@ -133,3 +133,11 @@ export function normalizeTarget(raw: string): NormalizeResult {
   if (value.startsWith('@') || HANDLE_RE.test(value.toLowerCase())) return normalizeHandle(value)
   return normalizeUrl(value)
 }
+
+/**
+ * How a stored listing names its target on screen: `@handle` or the bare URL.
+ * The key keeps the `handle:` / `url:` prefix, the label never shows it.
+ */
+export function targetLabel(listing: { targetType: string; targetKey: string; targetUrl: string }): string {
+  return listing.targetType === 'handle' ? `@${listing.targetKey.slice('handle:'.length)}` : listing.targetUrl
+}

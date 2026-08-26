@@ -3,6 +3,7 @@ import { copy } from '@config/copy'
 import { badgeFor } from '@config/theme'
 import RankMeter from './RankMeter'
 import type { BoardEntry } from '@/lib/board'
+import { targetLabel } from '@/lib/normalize'
 import { toDollars } from '@/lib/ranking'
 import { relativeTime } from '@/lib/time'
 
@@ -14,7 +15,7 @@ type Props = {
 }
 
 export default function ListingRow({ entry, rank, maxScoreCents, highlighted }: Props) {
-  const label = entry.targetType === 'handle' ? `@${entry.targetKey.slice('handle:'.length)}` : entry.targetUrl
+  const label = targetLabel(entry)
 
   return (
     <li

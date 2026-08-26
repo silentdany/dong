@@ -47,6 +47,60 @@ GitHub style links are keyed by path, so marketing params never split a listing
 in two. Invite links (Telegram, WhatsApp, Discord, Signal) and obvious porn
 domains are refused.
 
+## Share cards
+
+Every page ships its own 1200x630 card, rendered by `next/og`. A card is a pure
+function of its query string -- no database read -- which makes the URL the
+cache key: when the board moves, the image URL changes and scrapers re-fetch
+instead of serving last week's leader forever.
+
+Build the URLs with the helpers in `src/lib/og/links.ts` rather than by hand:
+
+```ts
+import { duelMetadata, ogBoard, ogDuel, ogImage, ogListing, textCardMetadata } from '@/lib/og/links'
+```
+
+| Page | Card |
+| --- | --- |
+| `/` | `/og/board` -- #1 with a full bar, the next three as compact rows |
+| `/l/[id]` | `/og/listing` -- name, length, rank, badge, cost to take #1 |
+| `/rules`, `/about`, `/success`, `/cancel` | `/og/text` |
+| anything else | `/og` |
+
+### Duels
+
+The duel card is ready before the duel pages are. It takes two names and two
+lengths, sorts them itself, and works out the verdict and the price of flipping
+the result from the board's own rules:
+
+```
+/og/duel?a=levelsio&acm=428&ah=@levelsio&b=Marc%20Lou&bcm=96&bh=@marc_louvion
+```
+
+A duel page wires its whole card in one call:
+
+```ts
+export async function generateMetadata({ params }): Promise<Metadata> {
+  const duel = await getDuel((await params).id)
+  return duelMetadata({
+    a: { name: duel.a.displayName, cm: lengthCm(duel.a.allTimeCents), target: targetLabel(duel.a) },
+    b: { name: duel.b.displayName, cm: lengthCm(duel.b.allTimeCents), target: targetLabel(duel.b) },
+  })
+}
+```
+
+Ties, a side that has never paid, and names long enough to break a layout are
+all handled by the card. `flip` and `tag` override the computed price and the
+top-right label when a duel has its own rules.
+
+### Fonts
+
+Satori embeds fonts, it does not fall back to the system, and it has no emoji
+font. The three faces in `src/app/og/fonts` ship in the repo and are pinned in
+`next.config.ts` output tracing, so a card never touches the network. The
+brand mark is drawn as vectors for the same reason -- `theme.meter.prefix` is a
+page-only flourish and never reaches a card.
+
 ## Deploy
 
 Set `DATABASE_URL`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`,
@@ -75,7 +129,11 @@ curl -X POST "$BASE/api/admin/hide" \
 | `/rules`, `/about` | Copy from `config/copy.ts` |
 | `/success`, `/cancel` | Stripe return pages |
 | `/out/[id]` | Counts the click, 302s to the target |
-| `/og` | OG card. `?name=&cm=&rank=` |
+| `/og` | Default share card. Legacy `?cm=&handle=` forwards to `/og/listing` |
+| `/og/board` | The board as it stands. `?kind=&r=name~cm~target&takeTop=` |
+| `/og/duel` | Head to head. `?a=&acm=&ah=&b=&bcm=&bh=&flip=&tag=` |
+| `/og/listing` | One listing. `?name=&target=&cm=&rank=&ratio=&badge=&desc=&takeTop=` |
+| `/og/text` | Typographic card. `?tag=&title=&sub=` |
 | `/api/quote` | Server-computed price preview |
 | `/api/checkout` | Reserves the listing, creates the Stripe session |
 | `/api/stripe/webhook` | Finalises rank, idempotent on `stripeSessionId` |

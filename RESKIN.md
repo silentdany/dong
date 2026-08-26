@@ -18,6 +18,8 @@ untouched by a reskin.
 | `about` | `/about`. |
 | `footer` | Footer line. |
 | `ogTitle`, `ogDescription` | Share card text. |
+| `og.*` | Share card chrome: the unit rule, the chips, the alt text. |
+| `duel.*` | The head-to-head card: chips, verdict lines, the flip price. |
 | `successTitle`, `cancelTitle` | Stripe return pages. |
 | `ui.*` | Row chrome: empty state, click counter, rank word, redirect copy. |
 | `form.*` | Field labels, placeholders, quote sentences. |
@@ -37,7 +39,9 @@ converted to display units (cm, whole dollars, rank). Keep the signatures.
 | `colors.danger` | Error text. |
 | `radius` | One value, used everywhere. |
 | `font` | A CSS font stack string. |
-| `meter.cap` | Character at the leading edge of the fill. `''` disables it. Hidden on a full bar. |
+| `meter.prefix` | Shown left of the length figure on the page. `''` disables it. |
+| `meter.tip` | Mark on the leading edge of the fill on the page. |
+| `meter.baseHalo` | Soft circular base at the start of the bar, on the page and on the cards. |
 | `meter.minPx` | Smallest visible fill, so a minimum bid is still a mark. |
 | `meter.maxPx` | Track width cap in px. `0` means no cap: the track fills the row. |
 | `meter.heightPx` / `meter.topHeightPx` | Bar height, and the taller one for the top ranks. |
@@ -102,10 +106,19 @@ keys), `src/lib/bid.ts` (pricing) and `src/app/api/**` (Stripe). Changing the
 unit name does not change the money: `$1` always credits `100` cents, and
 `lengthCm()` always floors cents to whole dollars.
 
-## One caveat about `meter.cap`
+## Share cards
 
-The browser falls back through the whole font stack, so any character works on
-the page. The OG image is rendered by Satori with a single embedded font, and a
-character outside its coverage comes out as a tofu box. Stick to Latin-1 range
-characters (`»`, `›`, `>`, `|`, `+`) or set `cap: ''` if your card matters more
-than the flourish.
+`src/app/og/**` reads the same two files. Every surface, glow and hairline on a
+card is derived from `theme.colors` by `src/lib/og/color.ts`, so changing `fill`
+changes every bar and every glow on every card, and `unitName` changes the unit
+printed next to each figure. There is no second palette to keep in sync.
+
+Two things a card cannot take from the theme:
+
+- **Emoji.** Satori embeds fonts and has no emoji font, so `meter.prefix` and
+  `copy.logo` never reach a card -- the brand mark is drawn as vectors in
+  `src/lib/og/parts.tsx`. Reskinning the mark means editing that SVG.
+- **Font files.** The page loads its faces from Google Fonts; a card loads the
+  `.ttf` files in `src/app/og/fonts`. Changing `theme.font` changes the page
+  only. To change the cards, drop new `.ttf` files in that folder and point
+  `src/lib/og/fonts.ts` at them.

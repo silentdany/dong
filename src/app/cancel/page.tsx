@@ -1,8 +1,13 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { copy } from '@config/copy'
+import { textCardMetadata } from '@/lib/og/links'
 
-export const metadata: Metadata = { title: copy.cancelTitle }
+export const metadata: Metadata = textCardMetadata({
+  tag: copy.og.cancelledTag,
+  title: copy.cancelTitle,
+  sub: copy.ui.cancelBody,
+})
 
 export default function CancelPage() {
   return (

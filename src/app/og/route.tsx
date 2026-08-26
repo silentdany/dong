@@ -1,92 +1,106 @@
-import { ImageResponse } from 'next/og'
 import { copy } from '@config/copy'
 import { theme } from '@config/theme'
+import { alpha, mix } from '@/lib/og/color'
+import { SANS, SERIF } from '@/lib/og/fonts'
+import { Frame, Ruler, TRACK, clamp } from '@/lib/og/parts'
+import { card, s } from '@/lib/og/render'
 
 export const runtime = 'nodejs'
 
-const WIDTH = 1200
-const HEIGHT = 630
-const PAD = 72
-const TRACK = WIDTH - PAD * 2
-const BAR_HEIGHT = 32
-const HALO = 54
+const c = theme.colors
 
-/** /og?cm=…&handle=…&ratio=… — the same card serves the site and any listing. */
+/**
+ * The default card: the whole product in one line and one measurement.
+ *
+ * `?cm=&handle=` is the shape listing cards used to be shared with. Those URLs
+ * are already out in the wild, so they are forwarded to /og/listing rather than
+ * broken.
+ */
 export function GET(request: Request) {
-  const params = new URL(request.url).searchParams
-  const cm = Math.max(0, Number(params.get('cm') ?? params.get('mm') ?? 0) || 0)
-  const handle = params.get('handle') ?? params.get('name') ?? copy.domain
-  const ratio = cm > 0 ? Math.min(1, Math.max(0, Number(params.get('ratio') ?? 1) || 1)) : 0
-  const prefix = theme.meter.prefix
-  const tip = theme.meter.tip
+  const url = new URL(request.url)
+  const params = url.searchParams
 
-  return new ImageResponse(
-    (
+  const legacyCm = params.get('cm') ?? params.get('mm')
+  if (legacyCm !== null) {
+    const next = new URL('/og/listing', url)
+    next.searchParams.set('cm', legacyCm)
+    next.searchParams.set('name', s(params, 'handle', s(params, 'name', copy.siteName)))
+    next.searchParams.set('ratio', s(params, 'ratio', '1'))
+    return Response.redirect(next, 307)
+  }
+
+  return card(
+    <Frame tag={copy.og.siteTag} footLeft={clamp(copy.footer, 72)} footRight={copy.domain}>
       <div
         style={{
-          width: WIDTH,
-          height: HEIGHT,
           display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          background: theme.colors.bg,
-          color: theme.colors.ink,
-          padding: PAD,
+          width: TRACK,
+          fontFamily: SERIF,
+          fontSize: 118,
+          lineHeight: 0.94,
+          letterSpacing: -4,
+          color: c.accent,
         }}
       >
-        <div style={{ display: 'flex', fontSize: 34, fontWeight: 700, letterSpacing: -1 }}>{copy.tagline}</div>
+        {clamp(copy.tagline, 30)}
+      </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, fontSize: 190, fontWeight: 700, letterSpacing: -8, lineHeight: 1, color: theme.colors.accent }}>
-            {prefix ? <span style={{ fontSize: 120 }}>{prefix}</span> : null}
-            <span>{copy.unitLabel(cm)}</span>
-          </div>
+      <div
+        style={{
+          display: 'flex',
+          width: TRACK - 200,
+          marginTop: 22,
+          fontFamily: SANS,
+          fontWeight: 600,
+          fontSize: 31,
+          lineHeight: 1.3,
+          color: alpha(c.ink, 0.6),
+        }}
+      >
+        {clamp(copy.kicker, 96)}
+      </div>
 
+      {/* The exchange rate, drawn instead of stated: one dollar of track. */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 26, width: TRACK, marginTop: 54 }}>
+        <div style={{ display: 'flex', fontFamily: SERIF, fontSize: 64, lineHeight: 1, color: c.ink }}>$1</div>
+
+        <div style={{ display: 'flex', position: 'relative', alignItems: 'center', flex: 1, height: 26, paddingLeft: 22 }}>
           <div
             style={{
               display: 'flex',
-              alignItems: 'center',
-              width: TRACK,
-              height: BAR_HEIGHT,
-              marginTop: 40,
-              marginLeft: HALO / 2,
-              background: theme.colors.track,
+              position: 'absolute',
+              left: 0,
+              top: -11,
+              width: 48,
+              height: 48,
               borderRadius: 999,
-              position: 'relative',
+              background: c.fill,
+              boxShadow: `0 0 0 6px ${alpha(c.fill, 0.2)}, 0 0 30px ${alpha(c.fill, 0.6)}`,
             }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                position: 'absolute',
-                left: -HALO / 2,
-                top: (BAR_HEIGHT - HALO) / 2,
-                width: HALO,
-                height: HALO,
-                borderRadius: 999,
-                background: theme.colors.fill,
-              }}
-            />
-            <div
-              style={{
-                display: 'flex',
-                width: Math.max(theme.meter.minPx, TRACK * ratio),
-                height: BAR_HEIGHT,
-                background: theme.colors.fill,
-                borderRadius: 999,
-              }}
-            />
-            {tip && ratio > 0 ? (
-              <div style={{ display: 'flex', marginLeft: 6, fontSize: 28, color: theme.colors.fill }}>
-                {tip}
-              </div>
-            ) : null}
-          </div>
+          />
+          <div
+            style={{
+              display: 'flex',
+              width: '100%',
+              height: 26,
+              borderRadius: 999,
+              backgroundImage: `linear-gradient(90deg, ${mix(c.fill, c.ink, 0.3)} 0%, ${c.fill} 60%, ${alpha(c.fill, 0.35)} 100%)`,
+              boxShadow: `0 0 34px ${alpha(c.fill, 0.5)}`,
+            }}
+          />
         </div>
 
-        <div style={{ display: 'flex', fontSize: 40, color: theme.colors.muted }}>{handle}</div>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
+          <div style={{ display: 'flex', fontFamily: SERIF, fontSize: 64, lineHeight: 1, color: c.accent }}>1</div>
+          <div style={{ display: 'flex', fontFamily: SANS, fontWeight: 700, fontSize: 26, color: alpha(c.ink, 0.6) }}>
+            {copy.unitName}
+          </div>
+        </div>
       </div>
-    ),
-    { width: WIDTH, height: HEIGHT },
+
+      <div style={{ display: 'flex', width: TRACK, marginTop: 26 }}>
+        <Ruler />
+      </div>
+    </Frame>,
   )
 }

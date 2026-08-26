@@ -1,8 +1,13 @@
 import type { Metadata } from 'next'
 import { copy } from '@config/copy'
+import { textCardMetadata } from '@/lib/og/links'
 import PaidRedirect from './PaidRedirect'
 
-export const metadata: Metadata = { title: copy.successTitle }
+export const metadata: Metadata = textCardMetadata({
+  tag: copy.og.paidTag,
+  title: copy.successTitle,
+  sub: copy.ui.successBody,
+})
 
 type SearchParams = Promise<{ l?: string }>
 

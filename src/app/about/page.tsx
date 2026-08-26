@@ -1,7 +1,13 @@
 import type { Metadata } from 'next'
 import { copy } from '@config/copy'
+import { textCardMetadata } from '@/lib/og/links'
 
-export const metadata: Metadata = { title: copy.aboutTitle }
+export const metadata: Metadata = textCardMetadata({
+  tag: copy.ui.navAbout,
+  title: copy.aboutTitle,
+  sub: copy.aboutGrafs[copy.aboutGrafs.length - 1],
+  description: copy.about,
+})
 
 export default function AboutPage() {
   return (

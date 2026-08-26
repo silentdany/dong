@@ -5,6 +5,7 @@ import { copy } from '@config/copy'
 import ThemeStyle from '@/components/ThemeStyle'
 import Footer from '@/components/Footer'
 import { baseUrl } from '@/lib/env'
+import { ogImage, ogSite } from '@/lib/og/links'
 
 export function generateMetadata(): Metadata {
   return {
@@ -16,9 +17,14 @@ export function generateMetadata(): Metadata {
       siteName: copy.siteName,
       title: copy.ogTitle,
       description: copy.ogDescription,
-      images: ['/og'],
+      images: [ogImage(ogSite(), copy.og.alt.site())],
     },
-    twitter: { card: 'summary_large_image', title: copy.ogTitle, description: copy.ogDescription, images: ['/og'] },
+    twitter: {
+      card: 'summary_large_image',
+      title: copy.ogTitle,
+      description: copy.ogDescription,
+      images: [ogImage(ogSite(), copy.og.alt.site())],
+    },
   }
 }
 
