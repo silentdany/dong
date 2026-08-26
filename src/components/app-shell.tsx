@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { LiveStatsPill } from "@/components/live-stats";
 import { SiteHeader } from "@/components/site-header";
@@ -34,6 +35,15 @@ export function AppShell({
             {copy.creditHandle}
           </a>
           . {copy.creditSuffix}
+        </p>
+        <p className="mt-3 flex items-center gap-3">
+          <Link to="/terms" className="text-muted underline decoration-border underline-offset-2 hover:text-fg">
+            {copy.termsNav}
+          </Link>
+          <span aria-hidden>·</span>
+          <Link to="/privacy" className="text-muted underline decoration-border underline-offset-2 hover:text-fg">
+            {copy.privacyNav}
+          </Link>
         </p>
       </footer>
     </div>

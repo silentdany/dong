@@ -14,8 +14,10 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as DuelRouteImport } from './routes/duel'
 import { Route as OgRouteImport } from './routes/og'
 import { Route as PaidRouteImport } from './routes/paid'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RulesRouteImport } from './routes/rules'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TodayRouteImport } from './routes/today'
 import { Route as DuelIndexRouteImport } from './routes/duel.index'
 import { Route as LIdRouteImport } from './routes/l.$id'
@@ -54,6 +56,11 @@ const PaidRoute = PaidRouteImport.update({
   path: '/paid',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RulesRoute = RulesRouteImport.update({
   id: '/rules',
   path: '/rules',
@@ -62,6 +69,11 @@ const RulesRoute = RulesRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TodayRoute = TodayRouteImport.update({
@@ -131,8 +143,10 @@ export interface FileRoutesByFullPath {
   '/duel': typeof DuelRouteWithChildren
   '/og': typeof OgRouteWithChildren
   '/paid': typeof PaidRoute
+  '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/today': typeof TodayRoute
   '/l/$id': typeof LIdRoute
   '/og/board': typeof OgBoardRoute
@@ -150,8 +164,10 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/paid': typeof PaidRoute
+  '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/today': typeof TodayRoute
   '/l/$id': typeof LIdRoute
   '/og/board': typeof OgBoardRoute
@@ -172,8 +188,10 @@ export interface FileRoutesById {
   '/duel': typeof DuelRouteWithChildren
   '/og': typeof OgRouteWithChildren
   '/paid': typeof PaidRoute
+  '/privacy': typeof PrivacyRoute
   '/rules': typeof RulesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/terms': typeof TermsRoute
   '/today': typeof TodayRoute
   '/l/$id': typeof LIdRoute
   '/og/board': typeof OgBoardRoute
@@ -195,8 +213,10 @@ export interface FileRouteTypes {
     | '/duel'
     | '/og'
     | '/paid'
+    | '/privacy'
     | '/rules'
     | '/sitemap.xml'
+    | '/terms'
     | '/today'
     | '/l/$id'
     | '/og/board'
@@ -214,8 +234,10 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/paid'
+    | '/privacy'
     | '/rules'
     | '/sitemap.xml'
+    | '/terms'
     | '/today'
     | '/l/$id'
     | '/og/board'
@@ -235,8 +257,10 @@ export interface FileRouteTypes {
     | '/duel'
     | '/og'
     | '/paid'
+    | '/privacy'
     | '/rules'
     | '/sitemap.xml'
+    | '/terms'
     | '/today'
     | '/l/$id'
     | '/og/board'
@@ -257,8 +281,10 @@ export interface RootRouteChildren {
   DuelRoute: typeof DuelRouteWithChildren
   OgRoute: typeof OgRouteWithChildren
   PaidRoute: typeof PaidRoute
+  PrivacyRoute: typeof PrivacyRoute
   RulesRoute: typeof RulesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TermsRoute: typeof TermsRoute
   TodayRoute: typeof TodayRoute
   LIdRoute: typeof LIdRoute
   OutIdRoute: typeof OutIdRoute
@@ -303,6 +329,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PaidRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/rules': {
       id: '/rules'
       path: '/rules'
@@ -315,6 +348,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/today': {
@@ -440,8 +480,10 @@ const rootRouteChildren: RootRouteChildren = {
   DuelRoute: DuelRouteWithChildren,
   OgRoute: OgRouteWithChildren,
   PaidRoute: PaidRoute,
+  PrivacyRoute: PrivacyRoute,
   RulesRoute: RulesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TermsRoute: TermsRoute,
   TodayRoute: TodayRoute,
   LIdRoute: LIdRoute,
   OutIdRoute: OutIdRoute,

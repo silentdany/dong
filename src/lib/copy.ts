@@ -83,6 +83,84 @@ export const copy = {
   clicks: (n: number) => `${n.toLocaleString("en-US")} ${n === 1 ? "click" : "clicks"}`,
 
   footer: "A public receipt. Keep pretending the rank is marketing.",
+  contactHeading: "Contact",
+  contactLine: "One person runs this. Both of these reach him.",
+  contactEmail: "dany@accura.dev",
+  contactHandle: "@MajorBaguette",
+  contactUrl: "https://x.com/MajorBaguette",
+
+  termsNav: "Terms",
+  termsTitle: "Terms",
+  termsKicker: "What you are buying, and what you are not.",
+  termsMetaDescription:
+    "The terms of epenis.lol. $1 buys 1 cm of a public ranking that decays. Payments are final.",
+  terms: [
+    {
+      heading: "What you are buying",
+      body: "A position on a public board, priced in dollars and drawn as a length. $1 buys 1 cm. Rank is your current length, and it falls 1 cm an hour, so a position is rented, never owned. You are not buying advertising performance, an audience, or our endorsement of what you link to.",
+    },
+    {
+      heading: "Payments are final",
+      body: "Stripe takes the payment; we never see or store your card. Once a charge lands it is credited and it is not refunded — not for a change of mind, not because the board moved, not because you were outbid an hour later. That is the whole joke and also the whole product.",
+    },
+    {
+      heading: "What you may list",
+      body: "A URL or an X handle you are entitled to promote. No invite links, no pornography, nothing illegal, nothing that impersonates someone else. Your display name and one-line description are shown publicly next to what you paid.",
+    },
+    {
+      heading: "We can take a listing down",
+      body: "A listing that breaks the rule above can be hidden or removed without a refund. We would rather explain than surprise you, so write to us and we will.",
+    },
+    {
+      heading: "No guarantees",
+      body: "The board is offered as it is. It can be slow, wrong, briefly down, or discontinued. Ranking rules and prices can change. Nothing here promises uptime, traffic, clicks, or a particular position.",
+    },
+    {
+      heading: "Liability",
+      body: "To the extent the law allows, our liability for the board is limited to what you paid into it. Nothing in these terms removes rights you have that cannot be removed.",
+    },
+  ],
+
+  privacyNav: "Privacy",
+  privacyTitle: "Privacy",
+  privacyKicker: "Almost nothing, and none of it secret.",
+  privacyMetaDescription:
+    "What epenis.lol collects: a listing, a payment record, a counter. No accounts, no profiles.",
+  privacy: [
+    {
+      heading: "There are no accounts",
+      body: "Sign-in is switched off. We never ask who you are, and there is nothing to log into.",
+    },
+    {
+      heading: "What a listing stores",
+      body: "The display name, the URL or handle, the one-line description, the total paid, and how many clicks it has sent. All of it is public on purpose — the board is a receipt.",
+    },
+    {
+      heading: "Payments",
+      body: "Stripe processes the card and holds that data under its own privacy policy. We keep only the amount and Stripe's session reference, which is what lets a payment be credited once and only once.",
+    },
+    {
+      heading: "Analytics",
+      body: "DataFast counts visits for us. We read one number back from it: how many visitors the site has ever had.",
+    },
+    {
+      heading: "The live counter",
+      body: "Your browser generates a random id, keeps it in local storage, and sends it every 30 seconds so the board can say how many people are here. It is not tied to a listing, a payment, or anything about you. Clearing site data throws it away and makes you a new visitor.",
+    },
+    {
+      heading: "Requests your browser makes elsewhere",
+      body: "Listing pictures come from unavatar.io and Google's favicon service, and the typefaces from Google Fonts. Loading them means your browser contacts those services directly, and they see your IP address. We do not send them anything else.",
+    },
+    {
+      heading: "Clicks",
+      body: "Following a listing's link adds one to that listing's counter. It is a number on the listing, not a record of you.",
+    },
+    {
+      heading: "Asking us about your data",
+      body: "Write to us and say what you want — a listing hidden, a description changed, a question answered. We will do it or tell you why we cannot.",
+    },
+  ],
+
   creditPrefix: "Shipped by",
   creditHandle: "@MajorBaguette",
   creditUrl: "https://x.com/MajorBaguette",

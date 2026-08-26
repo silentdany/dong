@@ -22,6 +22,8 @@ export async function renderSitemap() {
     urlTag("/today", "hourly", "0.8"),
     urlTag("/rules", "monthly", "0.3"),
     urlTag("/about", "monthly", "0.3"),
+    urlTag("/terms", "yearly", "0.1"),
+    urlTag("/privacy", "yearly", "0.1"),
     urlTag("/duel", "weekly", "0.4"),
   ];
   const listingUrls = listings.map((row) =>
