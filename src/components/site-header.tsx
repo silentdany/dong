@@ -7,7 +7,7 @@ const navClass =
 export function SiteHeader() {
   return (
     <header className="flex items-center justify-between gap-3 pt-[max(1rem,env(safe-area-inset-top))]">
-      <Link to="/" className="flex items-center gap-2 text-sm font-semibold tracking-tight text-fg">
+      <Link to="/" className="flex items-center gap-2 py-1.5 text-sm font-semibold tracking-tight text-fg">
         <span className="text-[1.35rem] leading-none" aria-hidden>
           {copy.logo}
         </span>
