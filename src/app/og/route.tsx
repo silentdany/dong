@@ -6,15 +6,16 @@ export const runtime = 'nodejs'
 
 const WIDTH = 1200
 const HEIGHT = 630
-const TRACK_WIDTH = 1000
+const PAD = 72
+const TRACK = WIDTH - PAD * 2
+const BAR_HEIGHT = 32
 
-/** /og?name=…&cm=…&rank=… — the same card serves the site and any listing. */
+/** /og?cm=…&handle=…&ratio=… — the same card serves the site and any listing. */
 export function GET(request: Request) {
   const params = new URL(request.url).searchParams
-  const name = params.get('name') ?? copy.siteName
-  const cm = Number(params.get('cm') ?? 0)
-  const rank = Number(params.get('rank') ?? 0)
-  const ratio = cm > 0 ? Math.min(1, Math.max(0.06, cm / Math.max(cm, 200))) : 0.06
+  const cm = Math.max(0, Number(params.get('cm') ?? 0) || 0)
+  const handle = params.get('handle') ?? params.get('name') ?? copy.domain
+  const ratio = cm > 0 ? Math.min(1, Math.max(0, Number(params.get('ratio') ?? 1) || 1)) : 0
 
   return new ImageResponse(
     (
@@ -27,32 +28,45 @@ export function GET(request: Request) {
           justifyContent: 'space-between',
           background: theme.colors.bg,
           color: theme.colors.ink,
-          padding: 72,
+          padding: PAD,
         }}
       >
-        <div style={{ display: 'flex', fontSize: 32, letterSpacing: -1, color: theme.colors.muted }}>
-          {copy.siteName}
-        </div>
+        <div style={{ display: 'flex', fontSize: 34, fontWeight: 700, letterSpacing: -1 }}>{copy.siteName}</div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-          <div style={{ display: 'flex', fontSize: 64, fontWeight: 700, letterSpacing: -2 }}>{name}</div>
-
-          <div style={{ display: 'flex', alignItems: 'center', width: TRACK_WIDTH, height: 28, background: theme.colors.track, borderRadius: 999 }}>
-            <div style={{ display: 'flex', width: TRACK_WIDTH * ratio, height: 28, background: theme.colors.fill, borderRadius: 999 }} />
-            <div style={{ display: 'flex', marginLeft: 8, fontSize: 24, color: theme.colors.fill }}>{theme.meter.cap}</div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', fontSize: 190, fontWeight: 700, letterSpacing: -8, lineHeight: 1, color: theme.colors.accent }}>
+            {copy.unitLabel(cm)}
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 24 }}>
-            <div style={{ display: 'flex', fontSize: 72, fontWeight: 700, color: theme.colors.accent }}>
-              {copy.unitLabel(cm)}
-            </div>
-            {rank > 0 ? (
-              <div style={{ display: 'flex', fontSize: 36, color: theme.colors.muted }}>{`${copy.ui.rank} #${rank}`}</div>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              width: TRACK,
+              height: BAR_HEIGHT,
+              marginTop: 40,
+              background: theme.colors.track,
+              borderRadius: 999,
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                width: Math.max(theme.meter.minPx, TRACK * ratio),
+                height: BAR_HEIGHT,
+                background: theme.colors.fill,
+                borderRadius: 999,
+              }}
+            />
+            {theme.meter.cap && ratio < 1 ? (
+              <div style={{ display: 'flex', marginLeft: 8, fontSize: 26, color: theme.colors.fill }}>
+                {theme.meter.cap}
+              </div>
             ) : null}
           </div>
         </div>
 
-        <div style={{ display: 'flex', fontSize: 28, color: theme.colors.muted }}>{copy.ogDescription}</div>
+        <div style={{ display: 'flex', fontSize: 40, color: theme.colors.muted }}>{handle}</div>
       </div>
     ),
     { width: WIDTH, height: HEIGHT },

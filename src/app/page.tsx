@@ -17,16 +17,13 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
   const takeTopDollars = toDollars(costToTakeTopCents(leader ?? 0))
 
   return (
-    <div className="flex flex-col gap-8">
-      <section>
-        <h1 className="text-3xl font-bold tracking-tight">{copy.tagline}</h1>
-        <p className="mt-2 text-sm" style={{ color: 'var(--l-muted)' }}>
-          {copy.description}
-        </p>
-        <p className="mt-3 text-sm font-semibold" style={{ color: 'var(--l-accent)' }}>
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <h1 className="text-base font-semibold tracking-tight">{copy.tagline}</h1>
+        <p className="text-sm font-semibold" style={{ color: 'var(--l-accent)' }}>
           {copy.claimNumberOne(takeTopDollars)}
         </p>
-      </section>
+      </div>
 
       {params.paid === '1' ? (
         <p
@@ -37,23 +34,16 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
         </p>
       ) : null}
 
-      <section
-        className="p-4"
-        style={{ background: 'var(--l-card)', borderRadius: 'var(--l-radius)' }}
-        id="bid"
-      >
+      <BoardToggle active={board} />
+
+      <Board entries={entries} highlightId={params.l} />
+
+      <section className="mt-4 p-4" style={{ background: 'var(--l-card)', borderRadius: 'var(--l-radius)' }} id="bid">
         <h2 className="text-lg font-semibold">{copy.form.legend}</h2>
         <p className="mb-4 mt-1 text-xs" style={{ color: 'var(--l-muted)' }}>
           {copy.newListingHint(toDollars(NEW_LISTING_MIN_CENTS))}
         </p>
         <BidForm />
-      </section>
-
-      <section>
-        <div className="mb-3">
-          <BoardToggle active={board} />
-        </div>
-        <Board entries={entries} highlightId={params.l} />
       </section>
     </div>
   )

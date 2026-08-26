@@ -26,6 +26,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   if (!listing) return { title: copy.errors.notFound }
 
   const cm = lengthCm(listing.allTimeCents)
+  const target = listing.targetType === 'handle' ? `@${listing.targetKey.slice('handle:'.length)}` : listing.targetUrl
   const title = copy.ui.detailTitle(listing.displayName)
   return {
     title: listing.displayName,
@@ -33,7 +34,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     openGraph: {
       title,
       description: listing.description || copy.ogDescription,
-      images: [`/og?name=${encodeURIComponent(listing.displayName)}&cm=${cm}`],
+      images: [`/og?cm=${cm}&handle=${encodeURIComponent(target)}`],
     },
   }
 }
@@ -63,19 +64,13 @@ export default async function ListingPage({ params }: { params: Params }) {
         {listing.description ? <p className="mt-1 text-sm">{listing.description}</p> : null}
 
         <div className="mt-4">
-          <RankMeter
-            scoreCents={listing.allTimeCents}
-            maxScoreCents={maxScoreCents}
-            label={copy.unitLabel(lengthCm(listing.allTimeCents))}
-          />
+          <RankMeter scoreCents={listing.allTimeCents} maxScoreCents={maxScoreCents} rank={1} />
         </div>
 
         <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
           <div>
             <dt style={{ color: 'var(--l-muted)' }}>{copy.boardAllTime}</dt>
-            <dd className="font-semibold tabular-nums">
-              {copy.unitLabel(lengthCm(listing.allTimeCents))} · {copy.ui.total(toDollars(listing.allTimeCents))}
-            </dd>
+            <dd className="font-semibold tabular-nums">{copy.ui.total(toDollars(listing.allTimeCents))}</dd>
           </div>
           <div>
             <dt style={{ color: 'var(--l-muted)' }}>{copy.boardToday}</dt>

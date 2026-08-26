@@ -3,7 +3,7 @@ import { copy } from '@config/copy'
 import { badgeFor } from '@config/theme'
 import RankMeter from './RankMeter'
 import type { BoardEntry } from '@/lib/board'
-import { lengthCm, toDollars } from '@/lib/ranking'
+import { toDollars } from '@/lib/ranking'
 import { relativeTime } from '@/lib/time'
 
 type Props = {
@@ -14,7 +14,6 @@ type Props = {
 }
 
 export default function ListingRow({ entry, rank, maxScoreCents, highlighted }: Props) {
-  const cm = lengthCm(entry.scoreCents)
   const label = entry.targetType === 'handle' ? `@${entry.targetKey.slice('handle:'.length)}` : entry.targetUrl
 
   return (
@@ -47,13 +46,10 @@ export default function ListingRow({ entry, rank, maxScoreCents, highlighted }: 
         ) : null}
 
         <div className="mt-2">
-          <RankMeter scoreCents={entry.scoreCents} maxScoreCents={maxScoreCents} label={copy.unitLabel(cm)} />
+          <RankMeter scoreCents={entry.scoreCents} maxScoreCents={maxScoreCents} rank={rank} />
         </div>
 
-        <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs" style={{ color: 'var(--l-muted)' }}>
-          <strong className="text-sm tabular-nums" style={{ color: 'var(--l-ink)' }}>
-            {copy.unitLabel(cm)}
-          </strong>
+        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs" style={{ color: 'var(--l-muted)' }}>
           <span className="tabular-nums">{copy.ui.total(toDollars(entry.scoreCents))}</span>
           <a
             href={`/out/${entry.id}`}

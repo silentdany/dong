@@ -37,14 +37,19 @@ converted to display units (cm, whole dollars, rank). Keep the signatures.
 | `colors.danger` | Error text. |
 | `radius` | One value, used everywhere. |
 | `font` | A CSS font stack string. |
-| `meter.cap` | The character at the leading edge of the fill. `''` disables it. |
+| `meter.cap` | Character at the leading edge of the fill. `''` disables it. Hidden on a full bar. |
 | `meter.minPx` | Smallest visible fill, so a minimum bid is still a mark. |
-| `meter.maxPx` | Track width cap, so #1 cannot blow out the layout. |
-| `meter.growMs` | Fill animation duration. |
+| `meter.maxPx` | Track width cap in px. `0` means no cap: the track fills the row. |
+| `meter.heightPx` / `meter.topHeightPx` | Bar height, and the taller one for the top ranks. |
+| `meter.topRanks` | How many ranks get the tall bar and the big number. |
+| `meter.valuePx` / `meter.topValuePx` | Font size of the length figure, and the big one for the top ranks. |
+| `meter.growMs` | Fill animation duration. Bars mount at zero and grow. |
 | `badges[]` | `{ minCents, label }`, ascending. Highest threshold reached wins. |
 
-Colours reach CSS as `--l-<token>` via `themeCssVars()`. If you add a colour
-token it becomes a variable automatically; use it as `var(--l-yourToken)`.
+Colours, `radius` and `font` reach CSS as `--l-<token>` via `themeCssVars()`. If
+you add a colour token it becomes a variable automatically; use it as
+`var(--l-yourToken)`. The `meter` numbers are read straight from `theme.ts` by
+`RankMeter`, so there is one source of truth and no matching CSS to update.
 
 ## Example: a louder comedy skin
 
@@ -78,7 +83,7 @@ colors: {
 },
 radius: '2px',
 font: "'Courier New', ui-monospace, monospace",
-meter: { cap: '›', minPx: 18, maxPx: 620, growMs: 300 },
+meter: { cap: '›', minPx: 18, maxPx: 0, heightPx: 10, topHeightPx: 28, topRanks: 1, valuePx: 14, topValuePx: 40, growMs: 300 },
 badges: [
   { minCents: 0, label: 'nobody' },
   { minCents: 500, label: 'trying' },

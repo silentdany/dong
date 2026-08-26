@@ -25,8 +25,16 @@ export const theme = {
     cap: '»',
     /** Smallest visible fill, so a $5 listing is still a mark and not nothing. */
     minPx: 14,
-    /** Track never grows past this, so #1 does not blow out the layout. */
-    maxPx: 560,
+    /** Track width cap in px. 0 means no cap: the track fills the row. */
+    maxPx: 0,
+    /** Bar height, and the taller one used for the top ranks. */
+    heightPx: 14,
+    topHeightPx: 22,
+    /** How many ranks get the tall bar and the big number. */
+    topRanks: 3,
+    /** Font size of the length figure, and the big one for the top ranks. */
+    valuePx: 15,
+    topValuePx: 28,
     /** Fill growth animation. */
     growMs: 650,
   },
@@ -59,8 +67,5 @@ export function themeCssVars(): string {
   }
   entries.push(`--l-radius: ${theme.radius};`)
   entries.push(`--l-font: ${theme.font};`)
-  entries.push(`--l-meter-min: ${theme.meter.minPx}px;`)
-  entries.push(`--l-meter-max: ${theme.meter.maxPx}px;`)
-  entries.push(`--l-meter-grow: ${theme.meter.growMs}ms;`)
   return `:root{${entries.join('')}}`
 }
