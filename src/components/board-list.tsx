@@ -85,20 +85,27 @@ export function BoardList({ entries, highlightId, leaderDollars, emptyText }: Pr
             <li
               key={entry.id}
               className={cn(
-                "rounded-lg bg-surface p-4",
+                "relative rounded-lg bg-surface p-4",
                 first && "bg-elevated p-5 ring-1 ring-fill/40",
                 highlightId === entry.id && "ring-2 ring-accent",
               )}
             >
+              {/*
+                The card is the ad. Clicking it goes where the listing paid to
+                send you — an overlay rather than a wrapper, because the row
+                also holds a link and a button, and an anchor cannot nest.
+              */}
+              <a
+                href={`/out/${entry.id}`}
+                rel="nofollow noopener sponsored"
+                aria-label={copy.visit(displayTarget(entry.targetType, entry.targetKey, entry.targetUrl))}
+                className="absolute inset-0 z-0 rounded-lg"
+              />
               <div className="flex items-start gap-3">
                 <RankIndex rank={rank} />
                 <div className="min-w-0 flex-1">
                   <div className="flex items-start justify-between gap-3">
-                    <Link
-                      to="/l/$id"
-                      params={{ id: entry.id }}
-                      className="flex min-w-0 items-center gap-2 text-fg"
-                    >
+                    <div className="flex min-w-0 items-center gap-2 text-fg">
                       <ListingLogo
                         type={entry.targetType}
                         targetKey={entry.targetKey}
@@ -114,7 +121,7 @@ export function BoardList({ entries, highlightId, leaderDollars, emptyText }: Pr
                       >
                         {entry.displayName}
                       </span>
-                    </Link>
+                    </div>
                     <span className="mt-0.5 max-w-[7.5rem] shrink-0 truncate text-right text-xs text-muted">
                       {badgeFor(current)}
                     </span>
@@ -131,13 +138,9 @@ export function BoardList({ entries, highlightId, leaderDollars, emptyText }: Pr
                   <p className="mt-3 truncate text-xs text-subtle">
                     <span className="tabular-nums text-muted">${toDollars(entry.allTimeCents)} paid</span>
                     <span aria-hidden> · </span>
-                    <a
-                      href={`/out/${entry.id}`}
-                      rel="nofollow noopener sponsored"
-                      className="text-muted underline-offset-2 hover:underline"
-                    >
+                    <span className="text-muted">
                       {displayTarget(entry.targetType, entry.targetKey, entry.targetUrl)}
-                    </a>
+                    </span>
                     <span aria-hidden> · </span>
                     <span>{relativeTime(entry.lastPaidAt ?? entry.createdAt)}</span>
                     {entry.clickCount > 0 ? (
@@ -148,7 +151,7 @@ export function BoardList({ entries, highlightId, leaderDollars, emptyText }: Pr
                     ) : null}
                   </p>
 
-                  <div className="mt-2 flex items-center gap-4 text-sm">
+                  <div className="relative z-10 mt-2 flex w-fit items-center gap-4 text-sm">
                     <Link
                       to="/l/$id"
                       params={{ id: entry.id }}

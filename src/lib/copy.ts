@@ -73,6 +73,8 @@ export const copy = {
   },
   /** Public analytics dashboard the pill links to. "" hides the link. */
   statsUrl: "https://datafa.st/share/6a8efd8f7011d4b609dc823b",
+  /** Accessible name for the card-wide link out to what a listing is promoting. */
+  visit: (target: string) => `Visit ${target}`,
   /** Clicks a single listing has sent to its target. */
   clicks: (n: number) => `${n.toLocaleString("en-US")} ${n === 1 ? "click" : "clicks"}`,
 
