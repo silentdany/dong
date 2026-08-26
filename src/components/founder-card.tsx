@@ -14,18 +14,22 @@ export function FounderCard({ listingId }: { listingId?: string | null }) {
           size="lg"
         />
         <div className="min-w-0">
-          <p className="font-display text-2xl leading-none tracking-tight text-fg">{founder.name}</p>
+          <p className="font-display text-2xl leading-none tracking-tight text-fg">
+            {founder.name}
+          </p>
           <a
             href={founder.url}
             target="_blank"
             rel="noreferrer noopener"
-            className="mt-1 inline-block text-sm font-medium text-accent underline-offset-2 hover:underline"
+            className="mt-1 inline-block py-1 text-sm font-medium text-accent underline-offset-2 hover:underline"
           >
             {founder.handle}
           </a>
         </div>
       </div>
-      <p className="mt-4 text-xs font-medium uppercase tracking-wide text-muted">{founder.kicker}</p>
+      <p className="mt-4 text-xs font-medium uppercase tracking-wide text-muted">
+        {founder.kicker}
+      </p>
       <p className="mt-2 text-sm leading-relaxed text-fg">{founder.line}</p>
       <p className="mt-3 text-sm text-muted">{founder.x}</p>
       {listingId ? (
@@ -38,7 +42,9 @@ export function FounderCard({ listingId }: { listingId?: string | null }) {
         </Link>
       ) : null}
 
-      <p className="mt-6 text-xs font-medium uppercase tracking-wide text-muted">{founder.sitesKicker}</p>
+      <p className="mt-6 text-xs font-medium uppercase tracking-wide text-muted">
+        {founder.sitesKicker}
+      </p>
       <ul className="mt-3 flex flex-col gap-2">
         {founder.sites.map((site) => (
           <li key={site.href}>

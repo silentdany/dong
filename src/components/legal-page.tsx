@@ -32,7 +32,7 @@ export function LegalPage({
             {copy.contactLine}{" "}
             <a
               href={`mailto:${copy.contactEmail}`}
-              className="text-accent underline underline-offset-2"
+              className="inline-block py-1 text-accent underline underline-offset-2"
             >
               {copy.contactEmail}
             </a>{" "}
@@ -41,7 +41,7 @@ export function LegalPage({
               href={copy.contactUrl}
               target="_blank"
               rel="noreferrer noopener"
-              className="text-accent underline underline-offset-2"
+              className="inline-block py-1 text-accent underline underline-offset-2"
             >
               {copy.contactHandle}
             </a>

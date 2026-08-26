@@ -125,7 +125,11 @@ function ListingPage() {
         />
         <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted">
           <span className="tabular-nums">${toDollars(listing.allTimeCents)} paid</span>
-          <a href={`/out/${listing.id}`} className="underline underline-offset-2" rel="nofollow">
+          <a
+            href={`/out/${listing.id}`}
+            className="inline-block py-1 underline underline-offset-2"
+            rel="nofollow"
+          >
             {displayTarget(listing.targetType, listing.targetKey, listing.targetUrl)}
           </a>
         </div>
