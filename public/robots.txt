@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /out/
+Disallow: /paid
+Disallow: /api/
+Disallow: /d/
+
+Sitemap: https://epenis.lol/sitemap.xml

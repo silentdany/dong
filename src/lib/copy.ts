@@ -1,0 +1,158 @@
+const usd = (dollars: number) => `$${dollars.toLocaleString("en-US")}`;
+
+export const copy = {
+  siteName: "epenis.lol",
+  logo: "🍆",
+  tagline: "Stop pretending.",
+  kicker: "You already paid to be taller. We named the unit.",
+  description:
+    "You screenshot the rank. You post the ROI. You call it pipeline. It was always a ruler. $1 buys 1 cm. It falls 1 cm per hour. You cannot fake a charge.",
+  unit: "cm",
+  unitLabel: (n: number) => `${n.toLocaleString("en-US")} cm`,
+  unitHint: "cm, paid",
+  today: "Today",
+  allTime: "All-time",
+  homeMetaTitle: "epenis.lol — stop pretending",
+  homeMetaDescription:
+    "A public ruler. $1 buys 1 cm. Rank is current length. It falls 1 cm an hour. You cannot fake a charge.",
+  todayTitle: "Still up today.",
+  todayKicker: "24 hours. Then gravity.",
+  todayDescription:
+    "Who paid recently enough to still have something up. Same ruler. Same centimetres. The rest already went soft.",
+  todayEmpty: "Nobody paid in the last 24 hours. The board went soft. $5 and you're today's only honest one.",
+  todayMetaTitle: "Today — epenis.lol",
+  todayMetaDescription:
+    "Who is still up on epenis.lol in the last 24 hours. $1 = 1 cm. Gravity is 1 cm an hour. Pay or go soft.",
+  rulesMetaDescription: "How epenis.lol works. $1 = 1 cm. It falls 1 cm an hour. No refunds. No costume.",
+  aboutMetaDescription: "Why epenis.lol exists. Rank was always money. We named the centimetres.",
+  duelMetaTitle: "Duel — epenis.lol",
+  duelMetaDescription:
+    "Pick someone on the board. Send the link. If they care, they pay. If they don't, they stay shorter in public.",
+  listingMetaTitle: (name: string, cm: number) => `${name} — ${cm} cm — epenis.lol`,
+  listingMetaDescription: (name: string, line: string) =>
+    line
+      ? `${name} on epenis.lol. ${line.replace(/[.!?]$/, "")}. $1 = 1 cm. It falls 1 cm an hour.`
+      : `${name} on the public ruler. $1 = 1 cm. Rank is paid length. It falls 1 cm an hour.`,
+  duelPairTitle: (a: string, b: string) => `${a} vs ${b} — epenis.lol`,
+  duelPairDescription: (a: string, b: string) =>
+    `${a} vs ${b} on epenis.lol. A public duel. $1 = 1 cm. The shorter one pays or stays shorter.`,
+  buy: "Pay for real",
+  raise: "Add cm",
+  raiseMark: "📏",
+  takeTop: (dollars: number) => `${usd(dollars)} to stop pretending you're #1`,
+  leaderLine: (cm: number) =>
+    cm > 0 ? `#1 is holding ${cm} cm and it is already going soft.` : "Nobody has paid. The sock is still on.",
+  drawerHint: "$5 to exist. $1 = 1 cm. Then it droops 1 cm an hour. Whole dollars. No costume discount.",
+  raiseHint: "Handle and name stay put. You pay the difference. The one line is fair game — that's the troll.",
+  empty:
+    "Empty board. Five dollars and you're the only honest one. That's the whole joke.",
+  rulesNav: "Rules",
+  aboutNav: "About",
+  rulesTitle: "The rules",
+  rulesKicker: "No costume. No screenshots. Pay.",
+  aboutTitle: "About",
+  noRefunds: "Final. No refunds. Pretending is free. This is not.",
+  demoPay:
+    "This preview does not charge a card. Confirm and the centimetres land on this name anyway.",
+  cardNext:
+    "Card next. Centimetres land on this name when Stripe confirms — never the other guy.",
+  confirmPay: "Pay for real",
+  confirmTitle: (cm: number, name?: string) =>
+    name ? `${name} at ${cm} cm. That's the receipt.` : `Drop the act at ${cm} cm?`,
+  confirmWho: (name: string) => `Paying for ${name}. Not the other guy.`,
+  cancel: "Keep pretending",
+  submitting: "Dropping the act…",
+  justPaid: "Paid. That's the only screenshot that counts.",
+  footer: "A public receipt. Keep pretending the rank is marketing.",
+  creditPrefix: "Shipped by",
+  creditHandle: "@MajorBaguette",
+  creditUrl: "https://x.com/MajorBaguette",
+  creditSuffix: "He asked to be in the footer. We put him on the board instead. He asked again.",
+  targetLabel: "URL or @handle",
+  targetPlaceholder: "@levelsio or the SaaS you keep posting",
+  nameLabel: "Display name",
+  namePlaceholder: "Your real name, for once",
+  lineLabel: "One line — pay to caption them",
+  linePlaceholder: "the costume / the screenshot / the troll",
+  floor: (n: number) => `Floor $${n}`,
+  takeTopBtn: (n: number) => `Take #1 $${n}`,
+  back: "Back to the board",
+  missing: "No such listing. Maybe it was still pretending.",
+  duel: "Duel",
+  duelMark: "⚔️",
+  duelKicker: "Free to open. Send the link. If they care, they pay. If they don't, they stay shorter in public.",
+  duelVs: "vs",
+  duelAhead: (name: string, cm: number) => `${name} is ${cm} cm longer. That's the screenshot.`,
+  duelGap: (cm: number) => `+${cm.toLocaleString("en-US")}`,
+  duelLonger: "cm longer",
+  duelHolding: "holding it",
+  duelTied: "Same size. Deeply awkward.",
+  duelCopy: "Copy the evidence",
+  duelCopied: "Copied. Go ruin their afternoon.",
+  duelYou: "That's you",
+  duelYouHint: "Which receipt is yours? Tap it. The link does the bullying.",
+  duelThem: "The problem",
+  duelYouSide: "You, allegedly",
+  duelMissing: "$5 and you exist. Then you can measure.",
+  duelSame: "That's the other guy. Pick the personality you actually paid for.",
+  duelCatchUp: "Pay to not be shorter",
+  duelOpen: "Make the link",
+  duelChallenge: (name: string) => `Measure up vs ${name}`,
+  duelWho: "Which one is your little secret?",
+  duelNew: "Still lurking, apparently",
+  duelAs: (name: string) => `Send it as ${name}`,
+  duelOther: "Wrong guy",
+  duelFind: "name or @handle of the costume",
+  duelNoHits: "Not on the board. $5 and you stop lurking.",
+  duelIndexTitle: "Pick someone. Send the link.",
+  duelIndexHint:
+    "A duel is not this page. It's a URL with two names on it. ⚔️ Duel on a card, choose yourself, copy the evidence.",
+} as const;
+
+export const quoteText = {
+  invalidTarget: "That is not a URL or an X handle. Even a fake landing page has a URL.",
+  belowMin: (min: number) => `Still pretending. Minimum is $${min}.`,
+  topGap: (leader: number, needed: number) =>
+    `#1 paid $${leader}. Pass with $${needed} or keep the costume.`,
+  db: "Board is in demo mode until the database is wired. The act can wait.",
+  mismatch: "That's the other guy. This card only pays for this receipt.",
+  fail: "Something broke. You are still pretending.",
+  ok: (charge: number, current: number, rank: number) => {
+    const chargeLine = `You will be charged $${charge}.`;
+    const currentLine = current > 0 ? ` Current total $${current}.` : "";
+    const rankLine =
+      rank === 1 ? " You take #1. Enjoy it while it lasts." : ` Rank #${rank}. Still a little costume left.`;
+    return `${chargeLine}${currentLine}${rankLine}`;
+  },
+};
+
+export const rules = [
+  "Rank is current length, not a screenshot. It falls 1 cm per hour. Pay to stay up.",
+  "$1 = 1 cm. Whole dollars only. They called it a bid. It was always a ruler.",
+  "A new listing starts at $5. Cheaper than the domain you bought to look busy.",
+  "The number you enter is your lifetime total. You are charged the difference. The extra centimetres start leaking immediately.",
+  "Raising costs at least $1 more than your current total. Honesty compounds. Gravity does too.",
+  "Passing #1 costs at least $5 more than their current length. Catch them on the way down if you want.",
+  "Equal length: the older listing stays higher. First to drop the act wins the tie.",
+  "Same URL or same @handle is the same listing. You cannot fork a new personality.",
+  "Today ranks who still has something up from the last 24 hours. All-time ranks everyone still on the board.",
+  "A duel is a link you send. Free. They pay only if they can't stand being the shorter one on a URL with their name on it.",
+  "Payments are final. No refunds. No “it was a bit”. No “it's just marketing”. It is the product.",
+] as const;
+
+export const about = [
+  "The idea is clean: pay to stand above the others, in public, no algorithm. Genius. Then the users put a vest on it. Five figures to be #1. ROI screenshots. Pipeline. “It's advertising.” It was always a ruler.",
+  "This board says that out loud. Rank is money. Money is length. $1 buys 1 cm. Then it falls 1 cm per hour. No categories. No costume.",
+  "Same dollar. We named the centimetres.",
+] as const;
+
+export function badgeFor(cents: number): string {
+  if (cents >= 250000) return "seek help";
+  if (cents >= 100000) return "unwell";
+  if (cents >= 25000) return "whole personality";
+  if (cents >= 10000) return "posted the roi";
+  if (cents >= 5000) return "textbook average";
+  if (cents >= 2000) return "almost a ruler";
+  if (cents >= 500) return "the floor";
+  return "still lurking";
+}

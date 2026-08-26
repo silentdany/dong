@@ -1,76 +1,82 @@
-export const NEW_LISTING_MIN_CENTS = 500
-export const RAISE_STEP_CENTS = 100
-export const TAKE_TOP_LEAD_CENTS = 500
-export const TODAY_WINDOW_MS = 24 * 60 * 60 * 1000
+export const NEW_LISTING_MIN = 5;
+export const RAISE_MIN = 1;
+export const TOP_GAP = 5;
 
-/** $1 = 1 cm, and partial dollars buy nothing. */
-export function lengthCm(scoreCents: number): number {
-  return Math.floor(scoreCents / 100)
+export function toDollars(cents: number) {
+  return Math.round(cents / 100);
 }
 
-export function toDollars(cents: number): number {
-  return Math.floor(cents / 100)
+export function toCents(dollars: number) {
+  return Math.round(dollars) * 100;
 }
 
-/** Smallest lifetime total a listing may declare next. */
-export function minTotalCents(currentTotalCents: number): number {
-  return currentTotalCents > 0 ? currentTotalCents + RAISE_STEP_CENTS : NEW_LISTING_MIN_CENTS
+export function lengthCm(cents: number) {
+  return toDollars(cents);
 }
 
-export function costToTakeTopCents(leaderTotalCents: number): number {
-  return leaderTotalCents + TAKE_TOP_LEAD_CENTS
+export function costToTakeTop(leaderDollars: number) {
+  if (leaderDollars <= 0) return NEW_LISTING_MIN;
+  return leaderDollars + TOP_GAP;
 }
 
-export type TotalCheck =
-  | { ok: true }
-  | { ok: false; reason: 'below-min'; minTotalCents: number }
-  | { ok: false; reason: 'top-gap'; leaderTotalCents: number; neededCents: number }
+export type RankRow = {
+  allTimeCents: number;
+  createdAt: string;
+  id?: string;
+};
 
-/**
- * `leaderTotalCents` is the top lifetime total excluding this listing itself,
- * or null when the board is empty.
- */
-export function checkTotal(input: {
-  newTotalCents: number
-  currentTotalCents: number
-  leaderTotalCents: number | null
-}): TotalCheck {
-  const min = minTotalCents(input.currentTotalCents)
-  if (input.newTotalCents < min) return { ok: false, reason: 'below-min', minTotalCents: min }
-
-  // #1 is not sold a dollar at a time: to end up above the leader you must clear
-  // them by TAKE_TOP_LEAD_CENTS. Landing on or under the leader is legal, it just
-  // buys a lower rank -- and an exact tie loses, because ties favour the older listing.
-  const leader = input.leaderTotalCents
-  if (leader !== null && input.newTotalCents > leader && input.newTotalCents < costToTakeTopCents(leader)) {
-    return { ok: false, reason: 'top-gap', leaderTotalCents: leader, neededCents: costToTakeTopCents(leader) }
+export function projectedRank(
+  amountDollars: number,
+  listings: RankRow[],
+  existingId?: string,
+): number {
+  const amountCents = toCents(amountDollars);
+  const others = listings.filter((row) => row.id !== existingId);
+  let rank = 1;
+  for (const row of others) {
+    if (row.allTimeCents > amountCents) rank += 1;
+    else if (row.allTimeCents === amountCents) rank += 1;
   }
-
-  return { ok: true }
+  return rank;
 }
 
-/** A listing already in the board only pays the difference. */
-export function chargeCents(currentTotalCents: number, newTotalCents: number): number {
-  return newTotalCents - currentTotalCents
-}
+export type QuoteError =
+  | { code: "below-min"; minDollars: number }
+  | { code: "top-gap"; leaderDollars: number; neededDollars: number }
+  | { code: "invalid-amount" };
 
-export type Rankable = { scoreCents: number; createdAt: Date }
-
-/** Money descending; on an exact tie the older listing keeps the higher rank. */
-export function compareRank(a: Rankable, b: Rankable): number {
-  if (b.scoreCents !== a.scoreCents) return b.scoreCents - a.scoreCents
-  return a.createdAt.getTime() - b.createdAt.getTime()
-}
-
-/** Rank a hypothetical total would land at, 1-indexed. */
-export function projectedRank(sortedScoresCents: number[], newTotalCents: number): number {
-  let ahead = 0
-  for (const score of sortedScoresCents) {
-    if (score >= newTotalCents) ahead += 1
+export function quoteAmount(input: {
+  amountDollars: number;
+  currentDollars: number;
+  leaderDollars: number;
+  isNew: boolean;
+}): { ok: true; chargeDollars: number } | { ok: false; error: QuoteError } {
+  const { amountDollars, currentDollars, leaderDollars, isNew } = input;
+  if (!Number.isInteger(amountDollars) || amountDollars < 1) {
+    return { ok: false, error: { code: "invalid-amount" } };
   }
-  return ahead + 1
-}
-
-export function todayCutoff(now: Date = new Date()): Date {
-  return new Date(now.getTime() - TODAY_WINDOW_MS)
+  if (isNew && amountDollars < NEW_LISTING_MIN) {
+    return { ok: false, error: { code: "below-min", minDollars: NEW_LISTING_MIN } };
+  }
+  if (!isNew && amountDollars < currentDollars + RAISE_MIN) {
+    return {
+      ok: false,
+      error: { code: "below-min", minDollars: currentDollars + RAISE_MIN },
+    };
+  }
+  if (amountDollars > leaderDollars && amountDollars < leaderDollars + TOP_GAP) {
+    return {
+      ok: false,
+      error: {
+        code: "top-gap",
+        leaderDollars,
+        neededDollars: leaderDollars + TOP_GAP,
+      },
+    };
+  }
+  const charge = isNew ? amountDollars : amountDollars - currentDollars;
+  if (charge < 1) {
+    return { ok: false, error: { code: "invalid-amount" } };
+  }
+  return { ok: true, chargeDollars: charge };
 }
