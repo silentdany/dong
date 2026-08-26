@@ -201,12 +201,12 @@ export const copy = {
   duelOpen: "Make the link",
   duelChallenge: (name: string) => `Measure up vs ${name}`,
 
-  /** Sharing. Button stays plain. The post does the bullying. */
+  /** Sharing. Straight at the camera. */
   shareOnX: "Post on X",
   shareListing: (name: string, cm: number) =>
-    `${name} is ${cm} cm on ${copy.siteName}. Real money. Your leaderboard was cosplay.`,
-  shareDuel: (a: string, b: string) =>
-    `${a} vs ${b}. One paid more. The other is still posting ROI.`,
+    `Stop pretending. It was always about size. ${name} is ${cm} cm. What's yours?`,
+  shareDuel: (a: string, aCm: number, b: string, bCm: number) =>
+    `Stop pretending. It was always about size. ${a}: ${aCm} cm. ${b}: ${bCm} cm. Who's shorter?`,
   duelWho: "Which one is your little secret?",
   duelNew: "Still lurking, apparently",
   duelAs: (name: string) => `Send it as ${name}`,
