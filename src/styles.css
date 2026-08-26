@@ -37,14 +37,55 @@
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: var(--color-bg);
   }
 
   html,
   body,
   #app {
     min-height: 100dvh;
-    background: var(--color-bg);
     color: var(--color-fg);
+  }
+
+  /*
+   * Same room as the share cards (src/lib/og/parts.tsx Frame): plum field,
+   * fill bloom bottom-left, glans bloom top-right, 7px brand lick at the top.
+   * Fixed so scrolling the board does not drag the lights around.
+   */
+  html::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-color: var(--color-bg);
+    background-image:
+      linear-gradient(
+        90deg,
+        var(--color-fill) 0%,
+        color-mix(in oklab, var(--color-glans) 40%, var(--color-fill)) 38%,
+        transparent 100%
+      ),
+      radial-gradient(
+        circle at 8% 88%,
+        color-mix(in oklab, var(--color-fill) 42%, transparent) 0%,
+        transparent 55%
+      ),
+      radial-gradient(
+        circle at 78% 8%,
+        color-mix(in oklab, var(--color-glans) 18%, transparent) 0%,
+        transparent 45%
+      );
+    background-repeat: no-repeat;
+    background-size: 100% 7px, 100% 100%, 100% 100%;
+    background-position: 0 0, 0 0, 0 0;
+  }
+
+  body,
+  #app {
+    position: relative;
+    z-index: 1;
+    background: transparent;
   }
 
   body {
