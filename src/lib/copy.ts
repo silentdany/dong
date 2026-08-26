@@ -72,7 +72,7 @@ export const copy = {
     seeStats: "see stats",
   },
   /** Public analytics dashboard the pill links to. "" hides the link. */
-  statsUrl: "",
+  statsUrl: "https://datafa.st/share/6a8efd8f7011d4b609dc823b",
   /** Clicks a single listing has sent to its target. */
   clicks: (n: number) => `${n.toLocaleString("en-US")} ${n === 1 ? "click" : "clicks"}`,
 

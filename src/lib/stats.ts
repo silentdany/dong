@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { datafastVisitors } from "@/lib/datafast";
 import { getSql } from "@/lib/db";
 
 /**
@@ -64,8 +65,16 @@ export const pulse = createServerFn({ method: "POST" })
           (select coalesce(sum(click_count), 0) from listings where hidden = false) as clicks
       `;
       const row = rows[0];
+      // DataFast counts visitors for a living and filters bots; our own table
+      // only counts browsers that kept their id. Prefer theirs, keep ours as
+      // the floor so the pill still reads when the key is unset or they are down.
+      const vendor = await datafastVisitors();
       const stats = row
-        ? { online: Number(row.online), visitors: Number(row.visitors), clicks: Number(row.clicks) }
+        ? {
+            online: Number(row.online),
+            visitors: vendor ?? Number(row.visitors),
+            clicks: Number(row.clicks),
+          }
         : EMPTY;
       cached = { at: Date.now(), stats };
       return stats;
