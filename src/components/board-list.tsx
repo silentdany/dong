@@ -28,7 +28,7 @@ function RankIndex({ rank }: { rank: number }) {
     <span
       className={cn(
         "w-7 shrink-0 tabular-nums leading-none",
-        rank === 1 && "font-display text-3xl text-fill",
+        rank === 1 && "font-display text-3xl text-fill-text",
         rank === 2 && "pt-0.5 font-display text-2xl text-fg",
         rank === 3 && "pt-0.5 font-display text-xl text-muted",
         rank > 3 && "pt-1 text-xs font-medium text-subtle",

@@ -13,7 +13,7 @@ import { ogAltListing, ogListing } from "@/lib/og/links";
 import { useNow } from "@/lib/use-now";
 import { costToTakeTop, lengthCm, toDollars } from "@/lib/ranking";
 import { displayTarget } from "@/lib/target";
-import { seoHead } from "@/lib/seo";
+import { jsonLdScript, listingJsonLd, seoHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/l/$id")({
   loader: async ({ params }) => {
@@ -39,22 +39,37 @@ export const Route = createFileRoute("/l/$id")({
     const cm = lengthCm(listing.scoreCents);
     const leader = loaderData?.leader ?? 0;
     const rank = loaderData?.rank ?? 0;
-    return seoHead({
-      title: copy.listingMetaTitle(listing.displayName, cm),
-      description: copy.listingMetaDescription(listing.displayName, listing.description),
-      path: `/l/${listing.id}`,
-      image: ogListing({
-        name: listing.displayName,
-        target: displayTarget(listing.targetType, listing.targetKey, listing.targetUrl),
-        cm,
-        rank,
-        ratio: leader > 0 ? cm / leader : 1,
-        badge: badgeFor(listing.scoreCents),
-        desc: listing.description,
-        takeTop: costToTakeTop(leader),
+    return {
+      // Same shape the board uses: spread the head, then add the JSON-LD.
+      ...seoHead({
+        title: copy.listingMetaTitle(listing.displayName, cm),
+        description: copy.listingMetaDescription(listing.displayName, listing.description),
+        path: `/l/${listing.id}`,
+        image: ogListing({
+          name: listing.displayName,
+          target: displayTarget(listing.targetType, listing.targetKey, listing.targetUrl),
+          cm,
+          rank,
+          ratio: leader > 0 ? cm / leader : 1,
+          badge: badgeFor(listing.scoreCents),
+          desc: listing.description,
+          takeTop: costToTakeTop(leader),
+        }),
+        imageAlt: ogAltListing(listing.displayName, cm),
       }),
-      imageAlt: ogAltListing(listing.displayName, cm),
-    });
+      scripts: [
+        jsonLdScript(
+          listingJsonLd({
+            id: listing.id,
+            displayName: listing.displayName,
+            description: listing.description,
+            cm,
+            rank,
+            targetUrl: listing.targetUrl,
+          }),
+        ),
+      ],
+    };
   },
   component: ListingPage,
   notFoundComponent: () => (
@@ -93,14 +108,21 @@ function ListingPage() {
           name={listing.displayName}
           size="lg"
         />
-        <h1 className="min-w-0 font-display text-4xl leading-tight text-fg">{listing.displayName}</h1>
+        <h1 className="min-w-0 font-display text-4xl leading-tight text-fg">
+          {listing.displayName}
+        </h1>
       </div>
       {listing.description ? (
         <p className="mt-2 text-sm text-muted">{listing.description}</p>
       ) : null}
 
       <div className="mt-6 rounded-lg bg-surface p-4">
-        <LengthMeter snap={snap} now={now} maxCents={Math.max(listing.peakCents, live, 1)} featured />
+        <LengthMeter
+          snap={snap}
+          now={now}
+          maxCents={Math.max(listing.peakCents, live, 1)}
+          featured
+        />
         <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted">
           <span className="tabular-nums">${toDollars(listing.allTimeCents)} paid</span>
           <a href={`/out/${listing.id}`} className="underline underline-offset-2" rel="nofollow">
@@ -109,12 +131,7 @@ function ListingPage() {
         </div>
       </div>
 
-      <Button
-        type="button"
-        variant="outline"
-        className="mt-4"
-        onClick={() => setDuelOpen(true)}
-      >
+      <Button type="button" variant="outline" className="mt-4" onClick={() => setDuelOpen(true)}>
         <span aria-hidden>{copy.duelMark}</span>
         {copy.duelChallenge(listing.displayName)}
       </Button>

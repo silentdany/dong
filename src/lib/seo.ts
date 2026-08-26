@@ -82,6 +82,34 @@ export function boardJsonLd(
   };
 }
 
+/**
+ * A listing page, described. These are the pages people link to — one per
+ * paying listing, each already carrying a name, a rank and a price in its
+ * markup — and they were the only pages emitting no structured data.
+ */
+export function listingJsonLd(listing: {
+  id: string;
+  displayName: string;
+  description: string;
+  cm: number;
+  rank: number;
+  targetUrl: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ListItem",
+    position: listing.rank > 0 ? listing.rank : undefined,
+    url: canonical(`/l/${listing.id}`),
+    name: listing.displayName,
+    description: listing.description || copy.listingMetaDescription(listing.displayName, ""),
+    item: {
+      "@type": "WebPage",
+      url: listing.targetUrl,
+      name: listing.displayName,
+    },
+  };
+}
+
 export function jsonLdScript(data: unknown) {
   return {
     type: "application/ld+json",
