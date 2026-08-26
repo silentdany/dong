@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { badgeFor, copy } from "@/lib/copy";
+import { logoData } from "@/lib/og/avatar";
 import { alpha } from "@/lib/og/color";
 import { SANS, SERIF } from "@/lib/og/fonts";
 import { Frame, Lane, Ruler, TRACK, clamp } from "@/lib/og/parts";
@@ -18,6 +19,8 @@ export const Route = createFileRoute("/og/listing")({
         const badge = s(params, "badge", badgeFor(cm * 100));
         const takeTop = Math.max(0, Math.round(n(params, "takeTop")));
         const desc = s(params, "desc");
+        const target = s(params, "target");
+        const avatar = await logoData(target);
 
         return card(
           <Frame
@@ -43,9 +46,12 @@ export const Route = createFileRoute("/og/listing")({
 
             <Lane
               name={name}
-              meta={s(params, "target")}
+              meta={target}
+              avatar={avatar}
               cm={cm}
               ratio={cm > 0 ? share : 0}
+              peak={Math.min(1, Math.max(0, n(params, "peak", 0)))}
+              lost={Math.max(0, Math.round(n(params, "lost")))}
               tone={cm > 0 ? "hot" : "cold"}
               size="lg"
             />

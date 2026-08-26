@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { copy } from "@/lib/copy";
+import { logoDataAll } from "@/lib/og/avatar";
 import { alpha } from "@/lib/og/color";
 import { SERIF } from "@/lib/og/fonts";
 import { Blades, Frame, Lane, Ruler, TRACK, clamp, num } from "@/lib/og/parts";
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/og/duel")({
         ];
         const tie = sides[0].cm === sides[1].cm;
         const [top, low] = sides[0].cm >= sides[1].cm ? sides : [sides[1], sides[0]];
+        const [topFace, lowFace] = await logoDataAll([top.meta, low.meta]);
 
         const lead = top.cm - low.cm;
         const times = low.cm > 0 ? top.cm / low.cm : 0;
@@ -44,6 +46,7 @@ export const Route = createFileRoute("/og/duel")({
             <Lane
               name={top.name}
               meta={top.meta}
+              avatar={topFace}
               cm={top.cm}
               ratio={1}
               tone={top.cm > 0 ? "hot" : "cold"}
@@ -86,6 +89,7 @@ export const Route = createFileRoute("/og/duel")({
             <Lane
               name={low.name}
               meta={low.meta}
+              avatar={lowFace}
               cm={low.cm}
               ratio={ratio(low.cm, top.cm)}
               tone={tie && low.cm > 0 ? "hot" : "cold"}

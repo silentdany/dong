@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { copy } from "@/lib/copy";
+import { logoDataAll } from "@/lib/og/avatar";
 import { alpha } from "@/lib/og/color";
 import { SANS } from "@/lib/og/fonts";
 import { Frame, Lane, MiniRow, Ruler, TRACK, clamp } from "@/lib/og/parts";
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/og/board")({
           .filter((row) => row.name.length > 0)
           .slice(0, 4);
 
+        const faces = await logoDataAll(rows.map((row) => row.target));
         const leader = rows[0];
         const chasers = rows.slice(1);
 
@@ -37,6 +39,7 @@ export const Route = createFileRoute("/og/board")({
                 <Lane
                   name={leader.name}
                   meta={leader.target || undefined}
+                  avatar={faces[0]}
                   cm={leader.cm}
                   ratio={1}
                   tone="hot"
@@ -55,6 +58,7 @@ export const Route = createFileRoute("/og/board")({
                       rank={i + 2}
                       name={row.name}
                       cm={row.cm}
+                      avatar={faces[i + 1]}
                       ratio={ratio(row.cm, leader.cm)}
                     />
                   ))}

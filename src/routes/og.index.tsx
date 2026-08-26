@@ -1,12 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { copy } from "@/lib/copy";
-import { alpha, mix } from "@/lib/og/color";
+import { alpha } from "@/lib/og/color";
 import { SANS, SERIF } from "@/lib/og/fonts";
-import { Frame, Ruler, TRACK, clamp } from "@/lib/og/parts";
+import { Bar, Frame, Ruler, TRACK, clamp } from "@/lib/og/parts";
 import { card, s } from "@/lib/og/render";
 import { ogTheme } from "@/lib/og/theme";
 
 const c = ogTheme.colors;
+
+/** The rate row is "$1", the bar, then "1 cm" — the bar takes what is left. */
+const RATE_TRACK = TRACK - 90 - 120 - 26 * 2;
 
 export const Route = createFileRoute("/og/")({
   server: {
@@ -59,39 +62,9 @@ export const Route = createFileRoute("/og/")({
                 $1
               </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  position: "relative",
-                  alignItems: "center",
-                  flex: 1,
-                  height: 26,
-                  paddingLeft: 22,
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    position: "absolute",
-                    left: 0,
-                    top: -11,
-                    width: 48,
-                    height: 48,
-                    borderRadius: 999,
-                    background: alpha(c.fill, 0.4),
-                    boxShadow: `0 0 0 6px ${alpha(c.fill, 0.16)}, 0 0 24px ${alpha(c.fill, 0.45)}`,
-                  }}
-                />
-                <div
-                  style={{
-                    display: "flex",
-                    width: "100%",
-                    height: 26,
-                    borderRadius: 999,
-                    backgroundImage: `linear-gradient(90deg, ${mix(c.fill, c.ink, 0.3)} 0%, ${c.fill} 60%, ${mix(c.glans, c.fill, 0.5)} 100%)`,
-                    boxShadow: `0 0 34px ${alpha(c.fill, 0.5)}`,
-                  }}
-                />
+              {/* One dollar of track, drawn with the board's own meter. */}
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <Bar trackWidth={RATE_TRACK} share={1} barH={26} />
               </div>
 
               <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>

@@ -6,6 +6,7 @@ export const ogTheme = {
     muted: "#a8949c",
     accent: "#f0e6ea",
     track: "#2e242e",
+    elevated: "#251c25",
     fill: "#8a3d9b",
     glans: "#c45a8a",
     danger: "#c45c4a",
