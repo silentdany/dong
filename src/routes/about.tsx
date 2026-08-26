@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/app-shell";
 import { about, copy } from "@/lib/copy";
+import { ogAltText, ogText } from "@/lib/og/links";
 import { seoHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/about")({
@@ -9,6 +10,8 @@ export const Route = createFileRoute("/about")({
       title: `${copy.aboutTitle} — ${copy.siteName}`,
       description: copy.aboutMetaDescription,
       path: "/about",
+      image: ogText({ tag: copy.aboutNav, title: copy.aboutTitle, sub: copy.aboutMetaDescription }),
+      imageAlt: ogAltText(copy.aboutTitle),
     }),
   component: AboutPage,
 });

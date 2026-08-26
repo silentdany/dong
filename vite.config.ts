@@ -157,6 +157,13 @@ export default defineConfig(({ command, isPreview }) => ({
     strictPort: true,
   },
   resolve: { tsconfigPaths: true },
+  assetsInclude: ["**/*.ttf"],
+  ssr: {
+    external: ["@resvg/resvg-wasm"],
+  },
+  optimizeDeps: {
+    exclude: ["@resvg/resvg-wasm", "@resvg/resvg-js"],
+  },
   plugins: [
     pgliteBootstrapPlugin(),
     // Before tanstackStart so /auth/popup never falls through to the SPA.

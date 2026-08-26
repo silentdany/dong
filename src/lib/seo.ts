@@ -1,4 +1,5 @@
 import { copy } from "@/lib/copy";
+import { ogSite } from "@/lib/og/links";
 
 export const SITE_ORIGIN = "https://epenis.lol";
 
@@ -7,21 +8,44 @@ export function canonical(path: string) {
   return `${SITE_ORIGIN}${path}`;
 }
 
+export function absOg(path: string): string {
+  if (path.startsWith("http")) return path;
+  return `${SITE_ORIGIN}${path}`;
+}
+
 export function seoHead({
   title,
   description,
   path,
   index = true,
+  image,
+  imageAlt,
 }: {
   title: string;
   description: string;
   path: string;
   index?: boolean;
+  image?: string;
+  imageAlt?: string;
 }) {
+  const img = absOg(image ?? ogSite());
+  const alt = imageAlt ?? title;
   return {
     meta: [
       { title },
       { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:url", content: canonical(path) },
+      { property: "og:site_name", content: copy.siteName },
+      { property: "og:image", content: img },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: alt },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: description },
+      { name: "twitter:image", content: img },
       ...(index ? [] : [{ name: "robots", content: "noindex, nofollow" }]),
     ],
     links: index ? [{ rel: "canonical", href: canonical(path) }] : [],

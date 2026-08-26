@@ -6,22 +6,25 @@ import { DuelLaunch } from "@/components/duel-launch";
 import { LengthMeter } from "@/components/length-meter";
 import { ListingLogo } from "@/components/listing-logo";
 import { Button } from "@/components/ui/button";
-import { getLeader, getListing } from "@/lib/board";
+import { getLeader, getListing, getBoard } from "@/lib/board";
 import { badgeFor, copy } from "@/lib/copy";
 import { currentCents } from "@/lib/decay";
+import { ogAltListing, ogListing } from "@/lib/og/links";
 import { useNow } from "@/lib/use-now";
-import { lengthCm, toDollars } from "@/lib/ranking";
+import { costToTakeTop, lengthCm, toDollars } from "@/lib/ranking";
 import { displayTarget } from "@/lib/target";
 import { seoHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/l/$id")({
   loader: async ({ params }) => {
-    const [listing, leader] = await Promise.all([
+    const [listing, leader, entries] = await Promise.all([
       getListing({ data: { id: params.id } }),
       getLeader(),
+      getBoard({ data: { window: "all" } }),
     ]);
     if (!listing) throw notFound();
-    return { listing, leader };
+    const rank = entries.findIndex((row) => row.id === listing.id) + 1;
+    return { listing, leader, rank };
   },
   head: ({ loaderData }) => {
     const listing = loaderData?.listing;
@@ -33,10 +36,24 @@ export const Route = createFileRoute("/l/$id")({
         index: false,
       });
     }
+    const cm = lengthCm(listing.scoreCents);
+    const leader = loaderData?.leader ?? 0;
+    const rank = loaderData?.rank ?? 0;
     return seoHead({
-      title: copy.listingMetaTitle(listing.displayName, lengthCm(listing.scoreCents)),
+      title: copy.listingMetaTitle(listing.displayName, cm),
       description: copy.listingMetaDescription(listing.displayName, listing.description),
       path: `/l/${listing.id}`,
+      image: ogListing({
+        name: listing.displayName,
+        target: displayTarget(listing.targetType, listing.targetKey, listing.targetUrl),
+        cm,
+        rank,
+        ratio: leader > 0 ? cm / leader : 1,
+        badge: badgeFor(listing.scoreCents),
+        desc: listing.description,
+        takeTop: costToTakeTop(leader),
+      }),
+      imageAlt: ogAltListing(listing.displayName, cm),
     });
   },
   component: ListingPage,

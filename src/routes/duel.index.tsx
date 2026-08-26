@@ -1,6 +1,7 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/app-shell";
 import { copy } from "@/lib/copy";
+import { ogAltText, ogText } from "@/lib/og/links";
 import { seoHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/duel/")({
@@ -9,6 +10,8 @@ export const Route = createFileRoute("/duel/")({
       title: copy.duelMetaTitle,
       description: copy.duelMetaDescription,
       path: "/duel",
+      image: ogText({ tag: copy.duel, title: copy.duelIndexTitle, sub: copy.duelKicker }),
+      imageAlt: ogAltText(copy.duel),
     }),
   component: DuelIndex,
 });

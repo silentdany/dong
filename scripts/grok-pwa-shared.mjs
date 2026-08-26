@@ -10,7 +10,7 @@ export const DEFAULT_APP_NAME = "Grok App";
 export const OG_SERVICE_URL_DEFAULT = "https://og.grok.me";
 export const OG_SITE_REL_PATH = "src/lib/og/site.json";
 
-const SHARE_META_KEYS = new Set([
+export const SHARE_META_KEYS = new Set([
   "og:title",
   "og:description",
   "og:image",
@@ -375,6 +375,26 @@ export function grokOgHeadTags({
   return tags;
 }
 
+/** True for the app's Satori cards (`/og`, `/og/board`, …), not `public/og.jpg`. */
+export function isDynamicOgCardUrl(url) {
+  try {
+    const path = new URL(String(url ?? ""), "https://epenis.lol").pathname;
+    return path === "/og" || path === "/og/" || path.startsWith("/og/");
+  } catch {
+    return false;
+  }
+}
+
+export function htmlHasDynamicOgCard(html) {
+  const tags = String(html ?? "").match(/<meta\b[^>]*>/gi) || [];
+  for (const tag of tags) {
+    if (!/\b(?:property|name)\s*=\s*["'](?:og:image|twitter:image)["']/i.test(tag)) continue;
+    const content = tag.match(/\bcontent\s*=\s*["']([^"']+)["']/i);
+    if (content && isDynamicOgCardUrl(content[1])) return true;
+  }
+  return false;
+}
+
 export function stripShareMetaTags(html) {
   return String(html).replace(/<meta\b[^>]*>/gi, (tag) => {
     const attrs = [...tag.matchAll(/\b(?:property|name)\s*=\s*["']([^"']+)["']/gi)];
@@ -432,7 +452,8 @@ export function injectGrokPwaHead(html, ctx = {}) {
     host,
     documentTitle,
   );
-  let next = stripShareMetaTags(html);
+  const keepShare = htmlHasDynamicOgCard(html);
+  let next = keepShare ? html : stripShareMetaTags(html);
 
   const missing = grokPwaHeadTags(appName)
     .filter(([key]) => {
@@ -442,10 +463,12 @@ export function injectGrokPwaHead(html, ctx = {}) {
     })
     .map(([, tag]) => tag);
 
-  next = insertAfterHeadOpen(
-    next,
-    grokOgHeadTags({ host, appName, site, documentTitle, cwd }).join(""),
-  );
+  if (!keepShare) {
+    next = insertAfterHeadOpen(
+      next,
+      grokOgHeadTags({ host, appName, site, documentTitle, cwd }).join(""),
+    );
+  }
 
   if (!next.includes("/grok-app-builder/extensions.js")) {
     missing.push(...grokExtensionsHeadTags(projectId));

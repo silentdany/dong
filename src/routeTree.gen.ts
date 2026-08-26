@@ -12,12 +12,18 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as DuelRouteImport } from './routes/duel'
+import { Route as OgRouteImport } from './routes/og'
 import { Route as PaidRouteImport } from './routes/paid'
 import { Route as RulesRouteImport } from './routes/rules'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TodayRouteImport } from './routes/today'
 import { Route as DuelIndexRouteImport } from './routes/duel.index'
 import { Route as LIdRouteImport } from './routes/l.$id'
+import { Route as OgIndexRouteImport } from './routes/og.index'
+import { Route as OgBoardRouteImport } from './routes/og.board'
+import { Route as OgDuelRouteImport } from './routes/og.duel'
+import { Route as OgListingRouteImport } from './routes/og.listing'
+import { Route as OgTextRouteImport } from './routes/og.text'
 import { Route as OutIdRouteImport } from './routes/out.$id'
 import { Route as ApiStripeWebhookRouteImport } from './routes/api/stripe/webhook'
 import { Route as DLeftRightRouteImport } from './routes/d.$left.$right'
@@ -36,6 +42,11 @@ const AboutRoute = AboutRouteImport.update({
 const DuelRoute = DuelRouteImport.update({
   id: '/duel',
   path: '/duel',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OgRoute = OgRouteImport.update({
+  id: '/og',
+  path: '/og',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PaidRoute = PaidRouteImport.update({
@@ -68,6 +79,31 @@ const LIdRoute = LIdRouteImport.update({
   path: '/l/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OgIndexRoute = OgIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => OgRoute,
+} as any)
+const OgBoardRoute = OgBoardRouteImport.update({
+  id: '/board',
+  path: '/board',
+  getParentRoute: () => OgRoute,
+} as any)
+const OgDuelRoute = OgDuelRouteImport.update({
+  id: '/duel',
+  path: '/duel',
+  getParentRoute: () => OgRoute,
+} as any)
+const OgListingRoute = OgListingRouteImport.update({
+  id: '/listing',
+  path: '/listing',
+  getParentRoute: () => OgRoute,
+} as any)
+const OgTextRoute = OgTextRouteImport.update({
+  id: '/text',
+  path: '/text',
+  getParentRoute: () => OgRoute,
+} as any)
 const OutIdRoute = OutIdRouteImport.update({
   id: '/out/$id',
   path: '/out/$id',
@@ -93,13 +129,19 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/duel': typeof DuelRouteWithChildren
+  '/og': typeof OgRouteWithChildren
   '/paid': typeof PaidRoute
   '/rules': typeof RulesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/today': typeof TodayRoute
   '/l/$id': typeof LIdRoute
+  '/og/board': typeof OgBoardRoute
+  '/og/duel': typeof OgDuelRoute
+  '/og/listing': typeof OgListingRoute
+  '/og/text': typeof OgTextRoute
   '/out/$id': typeof OutIdRoute
   '/duel/': typeof DuelIndexRoute
+  '/og/': typeof OgIndexRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/d/$left/$right': typeof DLeftRightRoute
   '/duel/$left/$right': typeof DuelLeftRightRoute
@@ -112,8 +154,13 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/today': typeof TodayRoute
   '/l/$id': typeof LIdRoute
+  '/og/board': typeof OgBoardRoute
+  '/og/duel': typeof OgDuelRoute
+  '/og/listing': typeof OgListingRoute
+  '/og/text': typeof OgTextRoute
   '/out/$id': typeof OutIdRoute
   '/duel': typeof DuelIndexRoute
+  '/og': typeof OgIndexRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/d/$left/$right': typeof DLeftRightRoute
   '/duel/$left/$right': typeof DuelLeftRightRoute
@@ -123,13 +170,19 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/duel': typeof DuelRouteWithChildren
+  '/og': typeof OgRouteWithChildren
   '/paid': typeof PaidRoute
   '/rules': typeof RulesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/today': typeof TodayRoute
   '/l/$id': typeof LIdRoute
+  '/og/board': typeof OgBoardRoute
+  '/og/duel': typeof OgDuelRoute
+  '/og/listing': typeof OgListingRoute
+  '/og/text': typeof OgTextRoute
   '/out/$id': typeof OutIdRoute
   '/duel/': typeof DuelIndexRoute
+  '/og/': typeof OgIndexRoute
   '/api/stripe/webhook': typeof ApiStripeWebhookRoute
   '/d/$left/$right': typeof DLeftRightRoute
   '/duel/$left/$right': typeof DuelLeftRightRoute
@@ -140,13 +193,19 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/duel'
+    | '/og'
     | '/paid'
     | '/rules'
     | '/sitemap.xml'
     | '/today'
     | '/l/$id'
+    | '/og/board'
+    | '/og/duel'
+    | '/og/listing'
+    | '/og/text'
     | '/out/$id'
     | '/duel/'
+    | '/og/'
     | '/api/stripe/webhook'
     | '/d/$left/$right'
     | '/duel/$left/$right'
@@ -159,8 +218,13 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/today'
     | '/l/$id'
+    | '/og/board'
+    | '/og/duel'
+    | '/og/listing'
+    | '/og/text'
     | '/out/$id'
     | '/duel'
+    | '/og'
     | '/api/stripe/webhook'
     | '/d/$left/$right'
     | '/duel/$left/$right'
@@ -169,13 +233,19 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/duel'
+    | '/og'
     | '/paid'
     | '/rules'
     | '/sitemap.xml'
     | '/today'
     | '/l/$id'
+    | '/og/board'
+    | '/og/duel'
+    | '/og/listing'
+    | '/og/text'
     | '/out/$id'
     | '/duel/'
+    | '/og/'
     | '/api/stripe/webhook'
     | '/d/$left/$right'
     | '/duel/$left/$right'
@@ -185,6 +255,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   DuelRoute: typeof DuelRouteWithChildren
+  OgRoute: typeof OgRouteWithChildren
   PaidRoute: typeof PaidRoute
   RulesRoute: typeof RulesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -216,6 +287,13 @@ declare module '@tanstack/react-router' {
       path: '/duel'
       fullPath: '/duel'
       preLoaderRoute: typeof DuelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/og': {
+      id: '/og'
+      path: '/og'
+      fullPath: '/og'
+      preLoaderRoute: typeof OgRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/paid': {
@@ -260,6 +338,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/og/': {
+      id: '/og/'
+      path: '/'
+      fullPath: '/og/'
+      preLoaderRoute: typeof OgIndexRouteImport
+      parentRoute: typeof OgRoute
+    }
+    '/og/board': {
+      id: '/og/board'
+      path: '/board'
+      fullPath: '/og/board'
+      preLoaderRoute: typeof OgBoardRouteImport
+      parentRoute: typeof OgRoute
+    }
+    '/og/duel': {
+      id: '/og/duel'
+      path: '/duel'
+      fullPath: '/og/duel'
+      preLoaderRoute: typeof OgDuelRouteImport
+      parentRoute: typeof OgRoute
+    }
+    '/og/listing': {
+      id: '/og/listing'
+      path: '/listing'
+      fullPath: '/og/listing'
+      preLoaderRoute: typeof OgListingRouteImport
+      parentRoute: typeof OgRoute
+    }
+    '/og/text': {
+      id: '/og/text'
+      path: '/text'
+      fullPath: '/og/text'
+      preLoaderRoute: typeof OgTextRouteImport
+      parentRoute: typeof OgRoute
+    }
     '/out/$id': {
       id: '/out/$id'
       path: '/out/$id'
@@ -303,10 +416,29 @@ const DuelRouteChildren: DuelRouteChildren = {
 
 const DuelRouteWithChildren = DuelRoute._addFileChildren(DuelRouteChildren)
 
+interface OgRouteChildren {
+  OgBoardRoute: typeof OgBoardRoute
+  OgDuelRoute: typeof OgDuelRoute
+  OgListingRoute: typeof OgListingRoute
+  OgTextRoute: typeof OgTextRoute
+  OgIndexRoute: typeof OgIndexRoute
+}
+
+const OgRouteChildren: OgRouteChildren = {
+  OgBoardRoute: OgBoardRoute,
+  OgDuelRoute: OgDuelRoute,
+  OgListingRoute: OgListingRoute,
+  OgTextRoute: OgTextRoute,
+  OgIndexRoute: OgIndexRoute,
+}
+
+const OgRouteWithChildren = OgRoute._addFileChildren(OgRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   DuelRoute: DuelRouteWithChildren,
+  OgRoute: OgRouteWithChildren,
   PaidRoute: PaidRoute,
   RulesRoute: RulesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,

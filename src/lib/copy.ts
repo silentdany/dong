@@ -107,6 +107,26 @@ export const copy = {
   duelIndexTitle: "Pick someone. Send the link.",
   duelIndexHint:
     "A duel is not this page. It's a URL with two names on it. ⚔️ Duel on a card, choose yourself, copy the evidence.",
+  og: {
+    unitRule: "$1 = 1 cm. Falls 1 cm an hour.",
+    siteTag: "Public receipt",
+    listingTag: (rank: number) => (rank > 0 ? `Rank #${rank}` : "Listing"),
+    boardTag: (kind: "today" | "all-time") => (kind === "all-time" ? "All-time" : "Last 24 hours"),
+    paid: (dollars: number) => `${usd(dollars)} paid`,
+    takeTop: (dollars: number) => `${usd(dollars)} to take #1`,
+    boardEmpty: "Nobody has paid. Five dollars and you're the only honest one.",
+    duelTag: "Duel",
+    winnerChip: "Longer",
+    loserChip: "Still pretending",
+    tieChip: "Dead even",
+    verdict: (winner: string, times: string) => `${winner} is ${times}× longer. That's the screenshot.`,
+    verdictClose: (winner: string, cm: number) =>
+      cm > 0 ? `${winner} is ${cm} cm longer. That's the screenshot.` : `${winner} leads. Barely.`,
+    verdictTie: "Same size. Deeply awkward.",
+    verdictSolo: (winner: string) => `${winner} paid. The other one is still pretending.`,
+    flip: (dollars: number) => `${usd(dollars)} to flip it`,
+    flipNone: "Nothing to flip. Nobody paid.",
+  },
 } as const;
 
 export const quoteText = {

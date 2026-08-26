@@ -3,6 +3,8 @@ import { z } from "zod";
 import { BoardPage } from "@/components/board-page";
 import { getBoard, getLeader } from "@/lib/board";
 import { copy } from "@/lib/copy";
+import { ogAltBoard, ogBoard, ogSideFromListing } from "@/lib/og/links";
+import { costToTakeTop, lengthCm } from "@/lib/ranking";
 import { boardJsonLd, jsonLdScript, seoHead } from "@/lib/seo";
 
 const searchSchema = z.object({
@@ -19,14 +21,25 @@ export const Route = createFileRoute("/today")({
     ]);
     return { entries, leader };
   },
-  head: ({ loaderData }) => ({
-    ...seoHead({
-      title: copy.todayMetaTitle,
-      description: copy.todayMetaDescription,
-      path: "/today",
-    }),
-    scripts: [jsonLdScript(boardJsonLd("today", loaderData?.entries ?? []))],
-  }),
+  head: ({ loaderData }) => {
+    const entries = loaderData?.entries ?? [];
+    const leader = loaderData?.leader ?? 0;
+    const top = entries[0];
+    return {
+      ...seoHead({
+        title: copy.todayMetaTitle,
+        description: copy.todayMetaDescription,
+        path: "/today",
+        image: ogBoard({
+          kind: "today",
+          takeTop: costToTakeTop(leader),
+          rows: entries.slice(0, 4).map(ogSideFromListing),
+        }),
+        imageAlt: top ? ogAltBoard(top.displayName, lengthCm(top.scoreCents)) : copy.todayMetaTitle,
+      }),
+      scripts: [jsonLdScript(boardJsonLd("today", entries))],
+    };
+  },
   component: TodayPage,
 });
 

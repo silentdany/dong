@@ -8,8 +8,10 @@ import {
   appNameFromHost,
   createHeadInjector,
   grokXCreatorHeadTags,
+  htmlHasDynamicOgCard,
   injectGrokPwaHead,
   isDocumentPath,
+  isDynamicOgCardUrl,
   isInstallQuery,
   publicAppHost,
   renderWebManifest,
@@ -121,6 +123,19 @@ test("does not duplicate twitter:card or og:title", () => {
   assert.equal(once, twice);
   assert.equal(twice.split('name="twitter:card"').length - 1, 1);
   assert.equal(twice.split('property="og:title"').length - 1, 1);
+});
+
+test("keeps per-page /og cards instead of overwriting with /og.jpg", () => {
+  assert.equal(isDynamicOgCardUrl("https://epenis.lol/og"), true);
+  assert.equal(isDynamicOgCardUrl("https://epenis.lol/og/duel?a=x"), true);
+  assert.equal(isDynamicOgCardUrl("https://epenis.lol/og.jpg"), false);
+  const html =
+    '<html><head><title>Jonathan vs Marc</title><meta property="og:title" content="Jonathan vs Marc — epenis.lol"><meta property="og:image" content="https://epenis.lol/og/duel?a=Jonathan&acm=15"><meta name="twitter:card" content="summary_large_image"></head></html>';
+  assert.equal(htmlHasDynamicOgCard(html), true);
+  const out = injectGrokPwaHead(html, { host: "epenis.lol", appName: "epenis.lol" });
+  assert.match(out, /property="og:image" content="https:\/\/epenis\.lol\/og\/duel\?a=Jonathan&acm=15"/);
+  assert.doesNotMatch(out, /\/og\.jpg/);
+  assert.match(out, /property="og:title" content="Jonathan vs Marc — epenis.lol"/);
 });
 
 test("a baked site.image is treated as a custom card", () => {

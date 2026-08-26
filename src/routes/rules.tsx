@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell } from "@/components/app-shell";
 import { copy, rules } from "@/lib/copy";
+import { ogAltText, ogText } from "@/lib/og/links";
 import { seoHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/rules")({
@@ -9,6 +10,8 @@ export const Route = createFileRoute("/rules")({
       title: `${copy.rulesTitle} — ${copy.siteName}`,
       description: copy.rulesMetaDescription,
       path: "/rules",
+      image: ogText({ tag: copy.rulesNav, title: copy.rulesTitle, sub: copy.rulesKicker }),
+      imageAlt: ogAltText(copy.rulesTitle),
     }),
   component: RulesPage,
 });

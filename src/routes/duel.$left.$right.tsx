@@ -16,6 +16,7 @@ import { displayTarget } from "@/lib/target";
 import { useNow } from "@/lib/use-now";
 import { cn } from "@/lib/utils";
 import { seoHead } from "@/lib/seo";
+import { ogAltDuel, ogDuel, ogSideFromListing } from "@/lib/og/links";
 
 export const Route = createFileRoute("/duel/$left/$right")({
   validateSearch: z.object({
@@ -47,6 +48,8 @@ export const Route = createFileRoute("/duel/$left/$right")({
       title: copy.duelPairTitle(left.displayName, right.displayName),
       description: copy.duelPairDescription(left.displayName, right.displayName),
       path: `/duel/${left.id}/${right.id}`,
+      image: ogDuel({ a: ogSideFromListing(left), b: ogSideFromListing(right) }),
+      imageAlt: ogAltDuel(left.displayName, right.displayName),
     });
   },
   component: DuelPage,
