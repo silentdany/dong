@@ -18,14 +18,14 @@ export default function ListingRow({ entry, rank, maxScoreCents, highlighted }: 
 
   return (
     <li
-      className="flex gap-3 p-3"
+      className="flex gap-2.5 p-3 sm:gap-3"
       style={{
         background: 'var(--l-card)',
         borderRadius: 'var(--l-radius)',
         outline: highlighted ? '2px solid var(--l-accent)' : 'none',
       }}
     >
-      <span className="w-8 shrink-0 pt-0.5 text-lg font-bold tabular-nums" style={{ color: 'var(--l-muted)' }}>
+      <span className="w-7 shrink-0 pt-0.5 text-base font-bold tabular-nums sm:w-8 sm:text-lg" style={{ color: 'var(--l-muted)' }}>
         {rank}
       </span>
 
@@ -49,13 +49,13 @@ export default function ListingRow({ entry, rank, maxScoreCents, highlighted }: 
           <RankMeter scoreCents={entry.scoreCents} maxScoreCents={maxScoreCents} rank={rank} />
         </div>
 
-        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs" style={{ color: 'var(--l-muted)' }}>
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs" style={{ color: 'var(--l-muted)' }}>
           <span className="tabular-nums">{copy.ui.total(toDollars(entry.scoreCents))}</span>
           <a
             href={`/out/${entry.id}`}
             rel="nofollow noopener sponsored"
             target="_blank"
-            className="max-w-[16rem] truncate underline underline-offset-2"
+            className="max-w-[12rem] truncate underline underline-offset-2 sm:max-w-[16rem]"
           >
             {label}
           </a>

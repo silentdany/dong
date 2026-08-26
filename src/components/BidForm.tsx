@@ -109,6 +109,12 @@ export default function BidForm({ lockedTarget, defaultName = '', defaultDescrip
     setSubmitting(false)
   }
 
+  function onAmountChange(raw: string) {
+    // Keep only digits so mobile keyboards can't invent steps of 5 or decimals.
+    const cleaned = raw.replace(/[^0-9]/g, '')
+    setAmount(cleaned)
+  }
+
   return (
     <form onSubmit={submit} className="flex flex-col gap-3">
       <label className="flex flex-col gap-1 text-sm">
@@ -119,7 +125,8 @@ export default function BidForm({ lockedTarget, defaultName = '', defaultDescrip
           readOnly={Boolean(lockedTarget)}
           onChange={(event) => setTarget(event.target.value)}
           placeholder={copy.form.targetPlaceholder}
-          className="border px-3 py-2 text-base read-only:opacity-70"
+          autoComplete="url"
+          className="border px-3 py-2.5 text-base read-only:opacity-70"
           style={inputStyle}
         />
       </label>
@@ -132,7 +139,8 @@ export default function BidForm({ lockedTarget, defaultName = '', defaultDescrip
           value={displayName}
           onChange={(event) => setDisplayName(event.target.value)}
           placeholder={copy.form.namePlaceholder}
-          className="border px-3 py-2 text-base"
+          autoComplete="off"
+          className="border px-3 py-2.5 text-base"
           style={inputStyle}
         />
       </label>
@@ -144,7 +152,8 @@ export default function BidForm({ lockedTarget, defaultName = '', defaultDescrip
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           placeholder={copy.form.descriptionPlaceholder}
-          className="border px-3 py-2 text-base"
+          autoComplete="off"
+          className="border px-3 py-2.5 text-base"
           style={inputStyle}
         />
       </label>
@@ -153,13 +162,14 @@ export default function BidForm({ lockedTarget, defaultName = '', defaultDescrip
         <span className="font-medium">{copy.form.amountLabel}</span>
         <input
           required
-          type="number"
+          type="text"
           inputMode="numeric"
-          min={1}
-          step={1}
+          pattern="[0-9]*"
+          autoComplete="off"
           value={amount}
-          onChange={(event) => setAmount(event.target.value)}
-          className="border px-3 py-2 text-base tabular-nums"
+          onChange={(event) => onAmountChange(event.target.value)}
+          placeholder="5"
+          className="border px-3 py-2.5 text-base tabular-nums"
           style={inputStyle}
         />
       </label>
@@ -183,7 +193,7 @@ export default function BidForm({ lockedTarget, defaultName = '', defaultDescrip
       <button
         type="submit"
         disabled={submitting || !quote}
-        className="px-4 py-3 text-base font-semibold disabled:opacity-50"
+        className="px-4 py-3.5 text-base font-semibold disabled:opacity-50"
         style={{ background: 'var(--l-accent)', color: 'var(--l-accentInk)', borderRadius: 'var(--l-radius)' }}
       >
         {submitting ? copy.form.submitting : copy.form.submit}

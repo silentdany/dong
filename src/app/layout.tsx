@@ -27,10 +27,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <ThemeStyle />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
       </head>
       <body>
-        <div className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col px-4 py-8">
-          <header className="mb-6">
+        <div className="mx-auto flex min-h-dvh w-full max-w-2xl flex-col px-3 py-6 sm:px-4 sm:py-8">
+          <header className="mb-5 sm:mb-6">
             <Link href="/" className="text-sm font-bold tracking-tight">
               {copy.siteName}
             </Link>
