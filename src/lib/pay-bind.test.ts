@@ -4,8 +4,11 @@ import {
   assertListingMatchesTarget,
   checkoutReturnPath,
   expectedChargeMatchesPaid,
+  isEphemeralVercelHost,
   listingIdFromStripeSession,
   parseChargeCents,
+  publicPaidHref,
+  resolveCheckoutOrigin,
   safeReturnPath,
 } from "./pay-bind.ts";
 
@@ -114,6 +117,80 @@ describe("checkout return path", () => {
 
   it("returns to today after a payment started there", () => {
     assert.equal(safeReturnPath("/today", "lst_bob"), "/today?paid=1&l=lst_bob");
+  });
+});
+
+describe("checkout origin", () => {
+  it("never sends Stripe back to a unique Vercel deploy host", () => {
+    const unique = "https://epenis-p65w9bd5o-silentdanys-projects.vercel.app";
+    assert.equal(
+      resolveCheckoutOrigin({
+        appUrl: unique,
+        publicAppUrl: unique,
+        vercelUrl: "epenis-p65w9bd5o-silentdanys-projects.vercel.app",
+        vercelProductionUrl: "epenis-p65w9bd5o-silentdanys-projects.vercel.app",
+        requestOrigin: unique,
+        onVercel: true,
+        nodeEnv: "production",
+      }),
+      "https://epenis.lol",
+    );
+    assert.equal(isEphemeralVercelHost("epenis-p65w9bd5o-silentdanys-projects.vercel.app"), true);
+    assert.equal(isEphemeralVercelHost("epenis.vercel.app"), false);
+    assert.equal(isEphemeralVercelHost("epenis.lol"), false);
+  });
+
+  it("keeps the customer on epenis.lol when that is where they paid", () => {
+    assert.equal(
+      resolveCheckoutOrigin({
+        requestOrigin: "https://epenis.lol",
+        vercelUrl: "epenis-abc12345-silentdanys-projects.vercel.app",
+        onVercel: true,
+        nodeEnv: "production",
+      }),
+      "https://epenis.lol",
+    );
+  });
+
+  it("accepts the stable Vercel alias, not a git preview", () => {
+    assert.equal(
+      resolveCheckoutOrigin({
+        vercelProductionUrl: "epenis.vercel.app",
+        onVercel: true,
+      }),
+      "https://epenis.vercel.app",
+    );
+    assert.equal(
+      resolveCheckoutOrigin({
+        requestOrigin: "https://epenis-git-main-silentdanys-projects.vercel.app",
+        onVercel: true,
+      }),
+      "https://epenis.lol",
+    );
+  });
+
+  it("stays on localhost in dev", () => {
+    assert.equal(
+      resolveCheckoutOrigin({
+        requestOrigin: "http://localhost:8080",
+        nodeEnv: "development",
+      }),
+      "http://localhost:8080",
+    );
+    assert.equal(resolveCheckoutOrigin({ nodeEnv: "development" }), "http://localhost:8080");
+  });
+
+  it("bounces a unique Vercel receipt screen onto epenis.lol", () => {
+    assert.equal(
+      publicPaidHref("/?paid=1&l=lst_bob", "epenis-p65w9bd5o-silentdanys-projects.vercel.app"),
+      "https://epenis.lol/?paid=1&l=lst_bob",
+    );
+    assert.equal(publicPaidHref("/duel/lst_a/lst_b?paid=1&l=lst_a", "epenis.lol"), "/duel/lst_a/lst_b?paid=1&l=lst_a");
+    assert.equal(publicPaidHref("/?paid=1", "localhost"), "/?paid=1");
+    assert.equal(
+      publicPaidHref("https://evil.example", "epenis-p65w9bd5o-silentdanys-projects.vercel.app"),
+      "https://epenis.lol/?paid=1",
+    );
   });
 });
 

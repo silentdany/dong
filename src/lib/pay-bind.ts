@@ -81,3 +81,103 @@ export function parseChargeCents(metadata: Record<string, string> | null | undef
   if (!Number.isInteger(value) || value < 1) return null;
   return value;
 }
+
+/** Public hosts Stripe is allowed to send a cardholder back to. */
+const ALLOWED_CHECKOUT_HOSTS = new Set([
+  "epenis.lol",
+  "www.epenis.lol",
+  "epenis.vercel.app",
+]);
+
+const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
+
+export const CHECKOUT_CANONICAL_ORIGIN = "https://epenis.lol";
+
+export function hostnameOf(raw: string): string {
+  try {
+    const url = raw.includes("://") ? new URL(raw) : new URL(`https://${raw}`);
+    return url.hostname.toLowerCase();
+  } catch {
+    return "";
+  }
+}
+
+/**
+ * Unique Vercel URLs (`project-hash-scope.vercel.app`) are deployment-protection
+ * walls. Stripe must never send a customer there after they paid.
+ */
+export function isEphemeralVercelHost(host: string): boolean {
+  const h = host.toLowerCase().split(":")[0];
+  if (ALLOWED_CHECKOUT_HOSTS.has(h)) return false;
+  return h === "vercel.app" || h.endsWith(".vercel.app") || h === "vercel.com" || h.endsWith(".vercel.com");
+}
+
+export function isAllowedCheckoutHost(host: string): boolean {
+  const h = host.toLowerCase().split(":")[0];
+  return ALLOWED_CHECKOUT_HOSTS.has(h) || LOCAL_HOSTS.has(h);
+}
+
+function normalizeOrigin(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+  try {
+    const url = trimmed.includes("://") ? new URL(trimmed) : new URL(`https://${trimmed}`);
+    if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+    if (url.username || url.password) return null;
+    return url.origin;
+  } catch {
+    return null;
+  }
+}
+
+export type CheckoutOriginInput = {
+  appUrl?: string | null;
+  publicAppUrl?: string | null;
+  /** Ignored on purpose — this is the unique per-deploy host. */
+  vercelUrl?: string | null;
+  vercelProductionUrl?: string | null;
+  requestOrigin?: string | null;
+  nodeEnv?: string | null;
+  onVercel?: boolean;
+  canonicalOrigin?: string;
+};
+
+/**
+ * Origin baked into Stripe success/cancel URLs. Never `VERCEL_URL`: that is
+ * `epenis-<hash>-<team>.vercel.app`, which 404s or SSO-gates the receipt.
+ */
+export function resolveCheckoutOrigin(input: CheckoutOriginInput): string {
+  const canonical = (input.canonicalOrigin ?? CHECKOUT_CANONICAL_ORIGIN).replace(/\/+$/, "");
+  const prod = input.vercelProductionUrl?.trim();
+  const candidates = [
+    input.appUrl,
+    input.publicAppUrl,
+    input.requestOrigin,
+    prod ? (prod.includes("://") ? prod : `https://${prod}`) : null,
+  ];
+  for (const raw of candidates) {
+    const origin = normalizeOrigin(raw);
+    if (!origin) continue;
+    const host = hostnameOf(origin);
+    if (isEphemeralVercelHost(host)) continue;
+    if (isAllowedCheckoutHost(host)) return origin;
+  }
+  if (input.onVercel || input.nodeEnv === "production") return canonical;
+  return "http://localhost:8080";
+}
+
+/** Keep the payer on a public host; bounce unique Vercel deploys to canonical. */
+export function publicPaidHref(
+  returnPath: string,
+  currentHost?: string | null,
+  canonicalOrigin = CHECKOUT_CANONICAL_ORIGIN,
+): string {
+  const pathOnly = (returnPath.split("?")[0] ?? "") || "/";
+  const query = returnPath.includes("?") ? returnPath.slice(returnPath.indexOf("?")) : "";
+  const path =
+    SAFE_PATH.test(pathOnly) && !pathOnly.startsWith("//") ? `${pathOnly}${query}` : "/?paid=1";
+  const host = (currentHost ?? "").toLowerCase().split(":")[0];
+  if (!host || LOCAL_HOSTS.has(host) || ALLOWED_CHECKOUT_HOSTS.has(host)) return path;
+  return `${canonicalOrigin.replace(/\/+$/, "")}${path}`;
+}

@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import { getRequest } from "@tanstack/react-start/server";
 import { getSql } from "@/lib/db";
 import {
   assertListingMatchesTarget,
@@ -6,8 +7,11 @@ import {
   expectedChargeMatchesPaid,
   listingIdFromStripeSession,
   parseChargeCents,
+  publicPaidHref,
+  resolveCheckoutOrigin,
   type StripeLikeSession,
 } from "@/lib/pay-bind";
+import { SITE_ORIGIN } from "@/lib/seo";
 import { quoteAmount, toCents, toDollars } from "@/lib/ranking";
 import { currentLeaderDollars } from "@/lib/leader";
 import { parseTarget } from "@/lib/target";
@@ -64,11 +68,46 @@ function webhookSecret(): string | undefined {
   return process.env.STRIPE_WEBHOOK_SECRET?.trim() || undefined;
 }
 
-function originFromEnv(): string | null {
-  const explicit = process.env.APP_URL?.trim() || process.env.PUBLIC_APP_URL?.trim();
-  if (explicit) return explicit.replace(/\/+$/, "");
-  if (process.env.VERCEL_URL?.trim()) return `https://${process.env.VERCEL_URL.trim()}`;
-  return null;
+function headerHost(req: Request): { host: string; proto: string } | null {
+  const xf = req.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
+  const host = (xf || req.headers.get("host") || "").trim();
+  if (!host) return null;
+  const proto =
+    req.headers.get("x-forwarded-proto")?.split(",")[0]?.trim() ||
+    (host.startsWith("localhost") || host.startsWith("127.0.0.1") ? "http" : "https");
+  return { host, proto };
+}
+
+function requestParts(): { origin: string | null; host: string | null } {
+  try {
+    const req = getRequest();
+    if (!req) return { origin: null, host: null };
+    const parsed = headerHost(req);
+    if (!parsed) return { origin: null, host: null };
+    return {
+      origin: `${parsed.proto}://${parsed.host}`.replace(/\/+$/, ""),
+      host: parsed.host.split(":")[0] ?? null,
+    };
+  } catch {
+    return { origin: null, host: null };
+  }
+}
+
+function appOrigin(): string {
+  return resolveCheckoutOrigin({
+    appUrl: process.env.APP_URL,
+    publicAppUrl: process.env.PUBLIC_APP_URL,
+    vercelUrl: process.env.VERCEL_URL,
+    vercelProductionUrl: process.env.VERCEL_PROJECT_PRODUCTION_URL,
+    requestOrigin: requestParts().origin,
+    nodeEnv: process.env.NODE_ENV,
+    onVercel: Boolean(process.env.VERCEL),
+    canonicalOrigin: SITE_ORIGIN,
+  });
+}
+
+export function paidRedirectHref(returnPath: string): string {
+  return publicPaidHref(returnPath, requestParts().host, SITE_ORIGIN);
 }
 
 let stripeClient: Stripe | null | undefined;
@@ -78,13 +117,6 @@ function stripe(): Stripe | null {
   const key = stripeSecret();
   stripeClient = key ? new Stripe(key) : null;
   return stripeClient;
-}
-
-function appOrigin(returnPath?: string): string {
-  const env = originFromEnv();
-  if (env) return env;
-  if (returnPath?.startsWith("http")) return new URL(returnPath).origin;
-  return "http://localhost:8080";
 }
 
 async function loadListingById(id: string): Promise<DbListing | null> {
@@ -423,19 +455,24 @@ export async function fulfillCheckoutSessionId(
   sessionId: string,
 ): Promise<{ listingId: string | null; returnPath: string }> {
   const fallback = { listingId: null as string | null, returnPath: "/?paid=1" };
-  const client = stripe();
-  if (!client || !sessionId.startsWith("cs_")) return fallback;
-  const session = await client.checkout.sessions.retrieve(sessionId);
-  await fulfillStripeSession(session);
-  const listingId = listingIdFromStripeSession(session);
-  if (!listingId) return fallback;
-  return {
-    listingId,
-    returnPath: checkoutReturnPath({
+  try {
+    const client = stripe();
+    if (!client || !sessionId.startsWith("cs_")) return fallback;
+    const session = await client.checkout.sessions.retrieve(sessionId);
+    await fulfillStripeSession(session);
+    const listingId = listingIdFromStripeSession(session);
+    if (!listingId) return fallback;
+    return {
       listingId,
-      returnPath: session.metadata?.returnPath,
-    }),
-  };
+      returnPath: checkoutReturnPath({
+        listingId,
+        returnPath: session.metadata?.returnPath,
+      }),
+    };
+  } catch (error) {
+    console.error("[paid] fulfill failed", error);
+    return fallback;
+  }
 }
 
 export function constructStripeEvent(raw: string, signature: string): Stripe.Event | null {
