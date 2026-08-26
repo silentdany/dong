@@ -78,8 +78,9 @@ export function BidForm({
 
   const target = lockedTarget ?? targetDraft;
   const takeTop = costToTakeTop(leaderDollars);
+  const targetLocked = Boolean(lockedTarget) || Boolean(listingId);
   const identityLocked =
-    Boolean(listingId) || Boolean(lockedTarget) || currentDollars > 0 || Boolean(quote && quote.ok && quote.existingName);
+    targetLocked || currentDollars > 0 || Boolean(quote && quote.ok && quote.existingName);
   const receiptName = (quote && quote.ok && quote.existingName) || defaultName || displayName;
 
   useEffect(() => {
@@ -169,12 +170,17 @@ export function BidForm({
       {!cmOnly ? (
         <>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor={`target-${listingId ?? "new"}`}>{copy.targetLabel}</Label>
+            <Label
+              htmlFor={`target-${listingId ?? "new"}`}
+              className={targetLocked ? "text-muted" : undefined}
+            >
+              {copy.targetLabel}
+            </Label>
             <Input
               id={`target-${listingId ?? "new"}`}
-              required
+              required={!targetLocked}
               value={target}
-              readOnly={Boolean(lockedTarget) || Boolean(listingId)}
+              disabled={targetLocked}
               autoComplete="url"
               placeholder={copy.targetPlaceholder}
               onChange={(event) => setTargetDraft(event.target.value)}
@@ -182,13 +188,18 @@ export function BidForm({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor={`name-${listingId ?? "new"}`}>{copy.nameLabel}</Label>
+            <Label
+              htmlFor={`name-${listingId ?? "new"}`}
+              className={identityLocked ? "text-muted" : undefined}
+            >
+              {copy.nameLabel}
+            </Label>
             <Input
               id={`name-${listingId ?? "new"}`}
-              required
+              required={!identityLocked}
               maxLength={40}
               value={displayName}
-              readOnly={identityLocked}
+              disabled={identityLocked}
               autoComplete="off"
               placeholder={copy.namePlaceholder}
               onChange={(event) => setDisplayName(event.target.value)}
@@ -212,7 +223,7 @@ export function BidForm({
       )}
 
       <div className="rounded-md bg-bg p-4">
-        <AmountStepper value={amount} min={1} onChange={setAmount} />
+        <AmountStepper value={amount} min={minAmount} onChange={setAmount} />
         <div className="mt-4 flex flex-wrap gap-2">
           <Button type="button" variant="outline" size="sm" onClick={() => setAmount(minAmount)}>
             {copy.floor(minAmount)}
