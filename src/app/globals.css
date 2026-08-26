@@ -1,0 +1,17 @@
+@import 'tailwindcss';
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background: var(--l-bg);
+  color: var(--l-ink);
+  font-family: var(--l-font);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--l-accent);
+  color: var(--l-accentInk);
+}

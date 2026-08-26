@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // sqlite locally; swap provider to "postgresql" and point DATABASE_URL at
+  // Postgres for production. No other change is needed.
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Listing {
+  id           String    @id @default(cuid())
+  displayName  String
+  targetType   String // "url" | "handle"
+  targetKey    String    @unique
+  targetUrl    String
+  description  String    @default("")
+  allTimeCents Int       @default(0)
+  clickCount   Int       @default(0)
+  hidden       Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  payments     Payment[]
+
+  @@index([allTimeCents])
+  @@index([hidden, allTimeCents])
+}
+
+model Payment {
+  id              String   @id @default(cuid())
+  listingId       String
+  amountCents     Int
+  stripeSessionId String   @unique
+  createdAt       DateTime @default(now())
+  listing         Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([createdAt])
+  @@index([listingId, createdAt])
+}
