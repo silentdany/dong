@@ -4,13 +4,7 @@ import { LiveStatsPill } from "@/components/live-stats";
 import { SiteHeader } from "@/components/site-header";
 import { copy } from "@/lib/copy";
 
-export function AppShell({
-  children,
-  footerPad,
-}: {
-  children: ReactNode;
-  footerPad?: boolean;
-}) {
+export function AppShell({ children, footerPad }: { children: ReactNode; footerPad?: boolean }) {
   return (
     <div
       className={`mx-auto flex min-h-dvh w-full max-w-lg flex-col px-4 ${
@@ -18,11 +12,11 @@ export function AppShell({
       }`}
     >
       <SiteHeader />
-      <main className="flex-1 pt-6">{children}</main>
-      <div className="mt-10 flex justify-center">
+      <div className="mt-3 flex justify-center">
         <LiveStatsPill href={copy.statsUrl} />
       </div>
-      <footer className="mt-6 border-t border-border pt-4 text-xs leading-relaxed text-subtle">
+      <main className="flex-1 pt-6">{children}</main>
+      <footer className="mt-10 border-t border-border pt-4 text-xs leading-relaxed text-subtle">
         <p>{copy.footer}</p>
         <p className="mt-2">
           {copy.creditPrefix}{" "}
@@ -37,11 +31,17 @@ export function AppShell({
           . {copy.creditSuffix}
         </p>
         <p className="mt-2 flex items-center gap-3">
-          <Link to="/terms" className="inline-block py-1.5 text-muted underline decoration-border underline-offset-2 hover:text-fg">
+          <Link
+            to="/terms"
+            className="inline-block py-1.5 text-muted underline decoration-border underline-offset-2 hover:text-fg"
+          >
             {copy.termsNav}
           </Link>
           <span aria-hidden>·</span>
-          <Link to="/privacy" className="inline-block py-1.5 text-muted underline decoration-border underline-offset-2 hover:text-fg">
+          <Link
+            to="/privacy"
+            className="inline-block py-1.5 text-muted underline decoration-border underline-offset-2 hover:text-fg"
+          >
             {copy.privacyNav}
           </Link>
         </p>
