@@ -14,29 +14,29 @@ export const copy = {
   tagline: 'Stop pretending.',
   kicker: 'You already paid to be taller. We named the unit.',
   description:
-    'You screenshot the rank. You post the ROI. You call it pipeline. It was always a ruler. $1 buys 1 cm. You cannot fake a charge.',
+    'You screenshot the rank. You post the ROI. You call it pipeline. It was always a ruler. $1 buys 1 mm. You cannot fake a charge.',
 
   ctaPrimary: 'Pay for real',
   ctaRaise: 'Come clean',
 
-  unitName: 'cm',
-  unitLabel: (n: number) => `${n.toLocaleString('en-US')} cm`,
-  unitHint: 'cm, paid',
+  unitName: 'mm',
+  unitLabel: (n: number) => `${n.toLocaleString('en-US')} mm`,
+  unitHint: 'mm, paid',
 
   boardToday: 'Today',
   boardAllTime: 'All-time',
 
   claimNumberOne: (dollars: number) => `${usd(dollars)} to stop pretending you're #1`,
-  leaderLine: (cm: number) =>
-    cm > 0 ? `#1 stopped pretending at ${cm} cm.` : 'Nobody has paid. The costume is still on.',
+  leaderLine: (mm: number) =>
+    mm > 0 ? `#1 stopped pretending at ${mm} mm.` : 'Nobody has paid. The costume is still on.',
   newListingHint: (dollars: number) =>
-    `New entries start at ${usd(dollars)}. $1 buys 1 cm. Whole dollars only. The costume is extra.`,
+    `New entries start at ${usd(dollars)}. $1 buys 1 mm. Whole dollars only. The costume is extra.`,
 
   rulesTitle: 'The rules',
   rulesKicker: 'No costume. No screenshots. Pay.',
   rules: [
     'Rank is total money paid. Followers, ARR, and “just shipped” are costumes.',
-    '$1 = 1 cm. Whole dollars only. They called it a bid. It was always a ruler.',
+    '$1 = 1 mm. Whole dollars only. They called it a bid. It was always a ruler.',
     'A new listing starts at $5. Cheaper than the domain you bought to look busy.',
     'The number you enter is your lifetime total. You are charged the difference.',
     'Raising costs at least $1 more than your current total. Honesty compounds.',
@@ -51,16 +51,16 @@ export const copy = {
   aboutTitle: 'About',
   aboutGrafs: [
     'The idea is clean: pay to stand above the others, in public, no algorithm. Genius. Then the users put a vest on it. Five figures to be #1. ROI screenshots. Pipeline. “It\'s advertising.” It was always a ruler.',
-    'This board says that out loud. Rank is money. Money is length. $1 buys 1 cm. No categories. No costume.',
-    'Same dollar. We named the centimetres.',
+    'This board says that out loud. Rank is money. Money is length. $1 buys 1 mm. No categories. No costume.',
+    'Same dollar. We named the millimetres.',
   ],
   about:
-    'The idea is clean: pay to stand above the others, in public, no algorithm. Genius. Then the users put a vest on it. Five figures to be #1. ROI screenshots. Pipeline. “It\'s advertising.” It was always a ruler. This board says that out loud. Rank is money. Money is length. $1 buys 1 cm. No categories. No costume.',
+    'The idea is clean: pay to stand above the others, in public, no algorithm. Genius. Then the users put a vest on it. Five figures to be #1. ROI screenshots. Pipeline. “It\'s advertising.” It was always a ruler. This board says that out loud. Rank is money. Money is length. $1 buys 1 mm. No categories. No costume.',
 
   footer: 'A public receipt. Keep pretending the rank is marketing.',
 
   ogTitle: 'Stop pretending. — epenis.lol',
-  ogDescription: 'You already paid to be taller. We named the unit. $1 = 1 cm.',
+  ogDescription: 'You already paid to be taller. We named the unit. $1 = 1 mm.',
 
   successTitle: 'Paid. That\'s the only screenshot that counts.',
   cancelTitle: 'Cancelled. You kept pretending. Classic.',
@@ -75,7 +75,7 @@ export const copy = {
     detailTitle: (name: string) => `${name} on ${copy.siteName}`,
     navRules: 'Rules',
     navAbout: 'About',
-    successBody: 'Stripe is applying the centimetres. The board updates when the charge lands.',
+    successBody: 'Stripe is applying the millimetres. The board updates when the charge lands.',
     cancelBody: 'No charge was made. Your listing is untouched. The costume is still on.',
   },
 

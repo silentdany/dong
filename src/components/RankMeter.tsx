@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { copy } from '@config/copy'
 import { theme } from '@config/theme'
-import { lengthCm } from '@/lib/ranking'
+import { lengthMm } from '@/lib/ranking'
 
 type Props = {
   scoreCents: number
@@ -18,7 +18,7 @@ export default function RankMeter({ scoreCents, maxScoreCents, rank }: Props) {
   const ratio = maxScoreCents > 0 ? Math.min(1, Math.max(0, scoreCents / maxScoreCents)) : 0
   const isTop = rank !== undefined && rank <= topRanks
   const height = isTop ? topHeightPx : heightPx
-  const label = copy.unitLabel(lengthCm(scoreCents))
+  const label = copy.unitLabel(lengthMm(scoreCents))
 
   const [grown, setGrown] = useState(false)
   useEffect(() => {

@@ -10,12 +10,12 @@ const PAD = 72
 const TRACK = WIDTH - PAD * 2
 const BAR_HEIGHT = 32
 
-/** /og?cm=…&handle=…&ratio=… — the same card serves the site and any listing. */
+/** /og?mm=…&handle=…&ratio=… — the same card serves the site and any listing. */
 export function GET(request: Request) {
   const params = new URL(request.url).searchParams
-  const cm = Math.max(0, Number(params.get('cm') ?? 0) || 0)
+  const mm = Math.max(0, Number(params.get('mm') ?? params.get('cm') ?? 0) || 0)
   const handle = params.get('handle') ?? params.get('name') ?? copy.domain
-  const ratio = cm > 0 ? Math.min(1, Math.max(0, Number(params.get('ratio') ?? 1) || 1)) : 0
+  const ratio = mm > 0 ? Math.min(1, Math.max(0, Number(params.get('ratio') ?? 1) || 1)) : 0
 
   return new ImageResponse(
     (
@@ -35,7 +35,7 @@ export function GET(request: Request) {
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', fontSize: 190, fontWeight: 700, letterSpacing: -8, lineHeight: 1, color: theme.colors.accent }}>
-            {copy.unitLabel(cm)}
+            {copy.unitLabel(mm)}
           </div>
 
           <div
