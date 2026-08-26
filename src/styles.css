@@ -15,6 +15,10 @@
   --color-border: color-mix(in oklab, var(--color-fg) 12%, transparent);
   --color-border-strong: color-mix(in oklab, var(--color-fg) 22%, transparent);
   --color-danger: #c45c4a;
+  /* The "someone is here" dot. Green is the universal live signal, so it is a
+     token of its own rather than the brand fill — a purple dot on a purple site
+     reads as decoration, not as a status light. Muted to match the palette. */
+  --color-live: #46b56e;
   --color-fill: #8a3d9b;
   --color-glans: #c45a8a;
   --color-track: #2e242e;

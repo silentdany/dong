@@ -58,8 +58,8 @@ export function LiveStatsPill({ href }: { href?: string }) {
       aria-live="polite"
     >
       <span className="relative mr-2 flex size-2 shrink-0" aria-hidden>
-        <span className="absolute inline-flex size-full animate-ping rounded-full bg-fill opacity-75" />
-        <span className="relative inline-flex size-2 rounded-full bg-fill" />
+        <span className="absolute inline-flex size-full animate-ping rounded-full bg-live opacity-75" />
+        <span className="relative inline-flex size-2 rounded-full bg-live" />
       </span>
       <span className="truncate">
         <span className="font-medium tabular-nums text-fg">{copy.stats.online(stats.online)}</span>
