@@ -74,52 +74,19 @@ function seedSnap(cents: number, hoursAgo: number): DecaySnapshot {
   return { levelAtLastPay: cents, lastPaidAt, peakCents: cents };
 }
 
-/** Same rows as migrations/0002_listings.sql — used if Neon is not wired. */
+/** Same rows as migrations/0004_jonathan.sql — used if Neon is not wired. */
 function seedListings(): ListingRow[] {
   const rows: Array<{ hours: number } & Omit<ListingRow, "scoreCents" | "levelAtLastPay" | "lastPaidAt" | "peakCents" | "createdAt">> = [
     {
-      id: "lst_founder",
-      displayName: "Major Baguette",
+      id: "lst_jonathan",
+      displayName: "Jonathan Wilke",
       targetType: "handle",
-      targetKey: "handle:majorbaguette",
-      targetUrl: "https://x.com/MajorBaguette",
-      description: "stopped pretending",
-      allTimeCents: 18000,
-      clickCount: 12,
-      hours: 2,
-    },
-    {
-      id: "lst_second",
-      displayName: "ROI screenshot",
-      targetType: "url",
-      targetKey: "url:https://example.com/ship",
-      targetUrl: "https://example.com/ship",
-      description: "$17k. called it marketing.",
-      allTimeCents: 5500,
-      clickCount: 4,
-      hours: 1.5,
-    },
-    {
-      id: "lst_third",
-      displayName: "Building in public",
-      targetType: "handle",
-      targetKey: "handle:buildinpublic",
-      targetUrl: "https://x.com/buildinpublic",
-      description: "day 47 of the costume",
-      allTimeCents: 2200,
-      clickCount: 2,
-      hours: 40 / 60,
-    },
-    {
-      id: "lst_fourth",
-      displayName: "Lifestyle business",
-      targetType: "url",
-      targetKey: "url:https://example.com/floor",
-      targetUrl: "https://example.com/floor",
-      description: "the minimum honesty",
-      allTimeCents: 500,
-      clickCount: 1,
-      hours: 15 / 60,
+      targetKey: "handle:jonathan_wilke",
+      targetUrl: "https://x.com/jonathan_wilke",
+      description: "Started it. German average. You're welcome.",
+      allTimeCents: 1500,
+      clickCount: 0,
+      hours: 0,
     },
   ];
   const now = Date.now();
