@@ -5,6 +5,7 @@ import { BidForm } from "@/components/bid-form";
 import { DuelLaunch } from "@/components/duel-launch";
 import { LengthMeter } from "@/components/length-meter";
 import { ListingLogo } from "@/components/listing-logo";
+import { ShareOnX } from "@/components/share-on-x";
 import { Button } from "@/components/ui/button";
 import { getLeader, getListing, getBoard } from "@/lib/board";
 import { badgeFor, copy } from "@/lib/copy";
@@ -135,10 +136,16 @@ function ListingPage() {
         </div>
       </div>
 
-      <Button type="button" variant="outline" className="mt-4" onClick={() => setDuelOpen(true)}>
-        <span aria-hidden>{copy.duelMark}</span>
-        {copy.duelChallenge(listing.displayName)}
-      </Button>
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <Button type="button" variant="outline" onClick={() => setDuelOpen(true)}>
+          <span aria-hidden>{copy.duelMark}</span>
+          {copy.duelChallenge(listing.displayName)}
+        </Button>
+        <ShareOnX
+          text={copy.shareListing(listing.displayName, lengthCm(live))}
+          path={`/l/${listing.id}`}
+        />
+      </div>
 
       <section className="mt-8">
         <h2 className="font-display text-2xl text-fg">
