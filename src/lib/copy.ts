@@ -201,12 +201,12 @@ export const copy = {
   duelOpen: "Make the link",
   duelChallenge: (name: string) => `Measure up vs ${name}`,
 
-  /** Sharing. X renders the OG card, so the text carries attitude, not numbers. */
-  shareOnX: "Post on X",
-  shareListing: (name: string, cm: number) =>
-    `${name} is holding ${cm} cm on ${copy.siteName}. It falls 1 cm an hour.`,
+  /** Sharing. X renders the OG card underneath — the line is attitude, not a second ruler. */
+  shareOnX: "Post the receipt",
+  shareListing: (name: string, _cm: number) =>
+    `${name} stopped pretending on ${copy.siteName}. Rank is paid length. No costume.`,
   shareDuel: (a: string, b: string) =>
-    `${a} vs ${b} on ${copy.siteName}. $1 = 1 cm. One of them paid more.`,
+    `${a} vs ${b} on ${copy.siteName}. One of them is shorter in public. That's the product.`,
   duelWho: "Which one is your little secret?",
   duelNew: "Still lurking, apparently",
   duelAs: (name: string) => `Send it as ${name}`,
