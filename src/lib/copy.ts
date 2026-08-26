@@ -244,24 +244,38 @@ export const quoteText = {
 };
 
 export const rules = [
-  "Rank is current length, not a screenshot. It falls 1 cm per hour. Pay to stay up.",
+  "Rank is current length, not a screenshot. A centimetre you just paid holds for one hour. Then gravity. Pay to stay up.",
   "$1 = 1 cm. Whole dollars only. They called it a bid. It was always a ruler.",
   "A new listing starts at $5. Cheaper than the domain you bought to look busy.",
-  "The number you enter is your lifetime total. You are charged the difference. The extra centimetres start leaking immediately.",
+  "The number you enter is your lifetime total. You are charged the difference. Extra centimetres start leaking after that first hour.",
   "Raising costs at least $1 more than your current total. Honesty compounds. Gravity does too.",
   "Passing #1 costs at least $5 more than their current length. Catch them on the way down if you want.",
   "Equal length: the older listing stays higher. First to drop the act wins the tie.",
   "Same URL or same @handle is the same listing. You cannot fork a new personality.",
+  "The card is the ad. Tapping it sends people to whatever you listed. That click is the only ROI that is real.",
   "Today ranks who still has something up from the last 24 hours. All-time ranks everyone still on the board.",
-  "A duel is a link you send. Free. They pay only if they can't stand being the shorter one on a URL with their name on it.",
+  "A duel is a link you send. Free. They pay only if they cannot stand being the shorter one on a URL with their name on it.",
   "Payments are final. No refunds. No “it was a bit”. No “it's just marketing”. It is the product.",
 ] as const;
 
 export const about = [
   "The idea is clean: pay to stand above the others, in public, no algorithm. Genius. Then the users put a vest on it. Five figures to be #1. ROI screenshots. Pipeline. “It's advertising.” It was always a ruler.",
-  "This board says that out loud. Rank is money. Money is length. $1 buys 1 cm. Then it falls 1 cm per hour. No categories. No costume.",
-  "Same dollar. We named the centimetres.",
+  "This board says that out loud. Rank is money. Money is length. $1 buys 1 cm. It holds for an hour, then it falls. The card is the ad — tapping it is the click. No categories. No costume. No feed pretending it isn't money.",
+  "Same dollar. We named the centimetres. One person shipped it, paid, and is on the ruler with everyone else.",
 ] as const;
+
+export const founder = {
+  name: "Dany",
+  handle: "@MajorBaguette",
+  url: "https://x.com/MajorBaguette",
+  targetType: "handle",
+  targetKey: "handle:majorbaguette",
+  targetUrl: "https://x.com/MajorBaguette",
+  kicker: "The guy who named the centimetres",
+  line: "He shipped the board. He paid to be on it. He asked to be in the footer. Gravity does not make an exception.",
+  onBoard: "On the ruler, like everyone else",
+  x: "The costume is the handle. The receipt is the board.",
+} as const;
 
 export function badgeFor(cents: number): string {
   if (cents >= 250000) return "seek help";
