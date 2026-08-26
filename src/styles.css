@@ -22,6 +22,10 @@
      reads as decoration, not as a status light. Muted to match the palette. */
   --color-live: #46b56e;
   --color-fill: #8a3d9b;
+  /* The brand purple as *text*. #8a3d9b is 2.97:1 on the ground — fine painting
+     a bar, which is a graphic, but under AA for anything that has to be read.
+     Only text uses this, so meters and share cards keep the brand exactly. */
+  --color-fill-text: #a865bb;
   --color-glans: #c45a8a;
   --color-track: #2e242e;
   --color-ring: #f0e6ea;

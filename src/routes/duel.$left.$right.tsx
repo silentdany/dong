@@ -118,7 +118,7 @@ function DuelSide({
         />
         <div className="min-w-0">
           {big ? (
-            <p className="text-xs font-medium uppercase tracking-wide text-fill">{copy.duelHolding}</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-fill-text">{copy.duelHolding}</p>
           ) : null}
           <h2
             className={cn(
@@ -227,7 +227,7 @@ function DuelPage() {
       {!tied ? (
         <div className="mt-8 rounded-lg bg-elevated px-4 py-6 text-center ring-1 ring-fill/40">
           <p className="text-sm text-muted">{winner.displayName}</p>
-          <p className="mt-1 font-display text-7xl leading-none tracking-tight text-fill sm:text-8xl">
+          <p className="mt-1 font-display text-7xl leading-none tracking-tight text-fill-text sm:text-8xl">
             {copy.duelGap(delta)}
           </p>
           <p className="mt-2 font-display text-2xl text-fg">{copy.duelLonger}</p>
