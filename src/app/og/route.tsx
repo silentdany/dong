@@ -31,7 +31,7 @@ export function GET(request: Request) {
           padding: PAD,
         }}
       >
-        <div style={{ display: 'flex', fontSize: 34, fontWeight: 700, letterSpacing: -1 }}>{copy.siteName}</div>
+        <div style={{ display: 'flex', fontSize: 34, fontWeight: 700, letterSpacing: -1 }}>{copy.tagline}</div>
 
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', fontSize: 190, fontWeight: 700, letterSpacing: -8, lineHeight: 1, color: theme.colors.accent }}>

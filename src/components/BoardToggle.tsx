@@ -9,10 +9,7 @@ const OPTIONS: { kind: BoardKind; label: string }[] = [
 
 export default function BoardToggle({ active }: { active: BoardKind }) {
   return (
-    <div
-      className="inline-flex rounded-full p-1 text-sm"
-      style={{ background: 'var(--l-track)', borderRadius: 'var(--l-radius)' }}
-    >
+    <div className="flex p-1" style={{ background: 'var(--l-card)', borderRadius: '8px' }}>
       {OPTIONS.map((option) => {
         const selected = option.kind === active
         return (
@@ -20,9 +17,9 @@ export default function BoardToggle({ active }: { active: BoardKind }) {
             key={option.kind}
             href={option.kind === 'today' ? '/' : '/?board=all-time'}
             aria-current={selected ? 'true' : undefined}
-            className="px-3 py-1 font-medium"
+            className="flex h-10 flex-1 items-center justify-center px-3 text-sm font-medium"
             style={{
-              borderRadius: 'var(--l-radius)',
+              borderRadius: '6px',
               background: selected ? 'var(--l-accent)' : 'transparent',
               color: selected ? 'var(--l-accentInk)' : 'var(--l-muted)',
             }}

@@ -9,89 +9,104 @@ const usd = (dollars: number) => `$${dollars.toLocaleString('en-US')}`
 export const copy = {
   siteName: 'epenis.lol',
   domain: 'epenis.lol',
+  logo: '🍆',
 
-  tagline: 'Rank is length. Pay to grow.',
+  tagline: 'Stop pretending.',
+  kicker: 'You already paid to be taller. We named the unit.',
   description:
-    'The only leaderboard honest about what it measures. $1 = 1 cm. No algorithm, no cope, no feelings. Just money and centimetres.',
+    'You screenshot the rank. You post the ROI. You call it pipeline. It was always a ruler. $1 buys 1 cm. You cannot fake a charge.',
 
-  ctaPrimary: 'Make me longer',
-  ctaRaise: 'Pump it',
+  ctaPrimary: 'Pay for real',
+  ctaRaise: 'Come clean',
 
   unitName: 'cm',
   unitLabel: (n: number) => `${n.toLocaleString('en-US')} cm`,
+  unitHint: 'cm, paid',
 
   boardToday: 'Today',
   boardAllTime: 'All-time',
 
-  claimNumberOne: (dollars: number) => `to dethrone #1: ${usd(dollars)}. cash only.`,
+  claimNumberOne: (dollars: number) => `${usd(dollars)} to stop pretending you're #1`,
+  leaderLine: (cm: number) =>
+    cm > 0 ? `#1 stopped pretending at ${cm} cm.` : 'Nobody has paid. The costume is still on.',
   newListingHint: (dollars: number) =>
-    `New entries start at ${usd(dollars)}. $1 = 1 cm. Whole dollars only. No feelings allowed.`,
+    `New entries start at ${usd(dollars)}. $1 buys 1 cm. Whole dollars only. The costume is extra.`,
 
-  rulesTitle: 'The rules (read them, coward)',
+  rulesTitle: 'The rules',
+  rulesKicker: 'No costume. No screenshots. Pay.',
   rules: [
-    'Rank is total money paid. Nothing else counts.',
-    '$1 = 1 cm. Whole dollars only.',
-    'A new listing starts at $5.',
+    'Rank is total money paid. Followers, ARR, and “just shipped” are costumes.',
+    '$1 = 1 cm. Whole dollars only. They called it a bid. It was always a ruler.',
+    'A new listing starts at $5. Cheaper than the domain you bought to look busy.',
     'The number you enter is your lifetime total. You are charged the difference.',
-    'Raising costs at least $1 more than your current total.',
-    'Passing #1 costs at least $5 more than their total. Pay less and you land wherever that buys.',
-    'Equal totals: the older listing stays higher.',
-    'Same URL or same @handle is the same listing.',
-    'Today ranks the last 24 hours of payments. All-time ranks everything.',
-    'Payments are final. There are no refunds. Ever.',
+    'Raising costs at least $1 more than your current total. Honesty compounds.',
+    'Passing #1 costs at least $5 more than their total. Pay less and you land wherever that buys. Still pretending.',
+    'Equal totals: the older listing stays higher. First to drop the act wins the tie.',
+    'Same URL or same @handle is the same listing. You cannot fork a new personality.',
+    'Today ranks the last 24 hours of payments. All-time ranks who dropped the act.',
+    'Payments are final. No refunds. No “it was a bit”. No “it\'s just marketing”. It is the product.',
     'Product URLs and X handles only. Invite links and porn are removed without refund.',
   ],
 
+  aboutTitle: 'About',
+  aboutGrafs: [
+    'The idea is clean: pay to stand above the others, in public, no algorithm. Genius. Then the users put a vest on it. Five figures to be #1. ROI screenshots. Pipeline. “It\'s advertising.” It was always a ruler.',
+    'This board says that out loud. Rank is money. Money is length. $1 buys 1 cm. No categories. No costume.',
+    'Same dollar. We named the centimetres.',
+  ],
   about:
-    'A public auction for length. You buy centimetres with real money, everyone sees exactly how much you paid, and the only leverage anyone has is a credit card. It is an advertising board wearing a joke as a hat. The joke is you.',
+    'The idea is clean: pay to stand above the others, in public, no algorithm. Genius. Then the users put a vest on it. Five figures to be #1. ROI screenshots. Pipeline. “It\'s advertising.” It was always a ruler. This board says that out loud. Rank is money. Money is length. $1 buys 1 cm. No categories. No costume.',
 
-  footer: 'A public auction for attention. Not affiliated with anyone measured. Cope harder.',
+  footer: 'A public receipt. Keep pretending the rank is marketing.',
 
-  ogTitle: 'epenis.lol — rank is length',
-  ogDescription: 'Pay money, get length. The longest sits at the top. $1 = 1 cm. No cope.',
+  ogTitle: 'Stop pretending. — epenis.lol',
+  ogDescription: 'You already paid to be taller. We named the unit. $1 = 1 cm.',
 
-  successTitle: 'Paid. You grew. Congrats I guess.',
-  cancelTitle: 'Cancelled. You stayed the same size. Classic.',
+  successTitle: 'Paid. That\'s the only screenshot that counts.',
+  cancelTitle: 'Cancelled. You kept pretending. Classic.',
 
   ui: {
-    boardEmpty: 'the board is empty. #1 is still available for $5. someone has to go first.',
+    boardEmpty: 'Nobody has paid yet. Five dollars and you\'re the only one who stopped pretending. That\'s the joke.',
     rank: 'Rank',
     clicks: (n: number) => `${n.toLocaleString('en-US')} clicks`,
     total: (dollars: number) => usd(dollars),
-    justPaid: 'Payment received. Stripe is the only truth here.',
+    justPaid: 'Paid. That\'s the only screenshot that counts.',
     backToBoard: 'Back to the board',
     detailTitle: (name: string) => `${name} on ${copy.siteName}`,
     navRules: 'Rules',
     navAbout: 'About',
-    successBody: 'Your length is being applied. The board updates when Stripe confirms. Patience.',
-    cancelBody: 'No charge was made. Your listing is untouched. You can try again when you grow a pair.',
+    successBody: 'Stripe is applying the centimetres. The board updates when the charge lands.',
+    cancelBody: 'No charge was made. Your listing is untouched. The costume is still on.',
   },
 
   form: {
-    legend: 'Buy length',
+    legend: 'Pay for real',
     targetLabel: 'URL or @handle',
-    targetPlaceholder: 'https://yourthing.com or @yourhandle',
+    targetPlaceholder: '@levelsio or the SaaS you keep posting',
     nameLabel: 'Display name',
-    namePlaceholder: 'What the world will call it',
+    namePlaceholder: 'Your real name, for once',
     descriptionLabel: 'One line (optional)',
-    descriptionPlaceholder: 'Cope, flex, or whatever. 140 chars max.',
+    descriptionPlaceholder: 'the costume / the screenshot / the truth',
     amountLabel: 'Your lifetime total in dollars',
     submit: 'Continue to payment',
     submitting: 'Opening Stripe…',
     quoteCharge: (dollars: number) => `You will be charged ${usd(dollars)} now.`,
     quoteCurrent: (dollars: number) => `This listing has already paid ${usd(dollars)}.`,
-    quoteRank: (rank: number) => `That buys rank #${rank}.`,
-    noRefunds: 'Payments are final. No refunds. No cope.',
+    quoteRank: (rank: number) =>
+      rank === 1 ? 'You take #1. The pretending stops.' : `That buys rank #${rank}. A little costume left.`,
+    noRefunds: 'Final. No refunds. Pretending is free. This is not.',
+    decrease: 'Decrease by one dollar',
+    increase: 'Increase by one dollar',
   },
 
   errors: {
-    generic: 'Something broke. Nothing was charged. Lucky you.',
-    invalidTarget: 'That is not a URL or an X handle.',
+    generic: 'Something broke. Nothing was charged. You are still pretending.',
+    invalidTarget: 'That is not a URL or an X handle. Even a fake landing page has a URL.',
     blockedTarget: 'That kind of link is not allowed here.',
-    belowMin: (dollars: number) => `Minimum is ${usd(dollars)}. Come on.`,
+    belowMin: (dollars: number) => `Still pretending. Minimum is ${usd(dollars)}.`,
     topGap: (leader: number, needed: number) =>
-      `#1 has ${usd(leader)}. Pass them with ${usd(needed)} or more, or pay ${usd(leader)} or less and take a lower rank.`,
-    notFound: 'No such listing. Maybe it was hidden. Or never existed.',
+      `#1 paid ${usd(leader)}. Pass with ${usd(needed)} or keep the costume.`,
+    notFound: 'No such listing. Maybe it was still pretending.',
   },
 } as const
 

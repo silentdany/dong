@@ -19,7 +19,7 @@ type Quote = {
 const inputStyle = {
   background: 'var(--l-bg)',
   borderColor: 'var(--l-track)',
-  borderRadius: 'var(--l-radius)',
+  borderRadius: '8px',
 } as const
 
 function messageFor(payload: { code?: string; minDollars?: number; leaderDollars?: number; neededDollars?: number }): string {
@@ -42,14 +42,14 @@ export default function BidForm({ lockedTarget, defaultName = '', defaultDescrip
   const [target, setTarget] = useState(lockedTarget ?? '')
   const [displayName, setDisplayName] = useState(defaultName)
   const [description, setDescription] = useState(defaultDescription)
-  const [amount, setAmount] = useState(defaultAmount ? String(defaultAmount) : '')
+  const [amount, setAmount] = useState(defaultAmount ? String(defaultAmount) : '5')
   const [quote, setQuote] = useState<Quote | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
+  const amountNumber = Number(amount) || 0
+
   // Quote is always recomputed server-side; the client never prices anything.
-  // Only the target and the amount move the price, so the text fields stay out
-  // of the dependency list and out of the request.
   useEffect(() => {
     const controller = new AbortController()
 
@@ -110,9 +110,13 @@ export default function BidForm({ lockedTarget, defaultName = '', defaultDescrip
   }
 
   function onAmountChange(raw: string) {
-    // Keep only digits so mobile keyboards can't invent steps of 5 or decimals.
     const cleaned = raw.replace(/[^0-9]/g, '')
     setAmount(cleaned)
+  }
+
+  function bump(delta: number) {
+    const next = Math.max(1, (Number(amount) || 0) + delta)
+    setAmount(String(next))
   }
 
   return (
@@ -158,21 +162,46 @@ export default function BidForm({ lockedTarget, defaultName = '', defaultDescrip
         />
       </label>
 
-      <label className="flex flex-col gap-1 text-sm">
+      <div className="flex flex-col gap-1 text-sm">
         <span className="font-medium">{copy.form.amountLabel}</span>
-        <input
-          required
-          type="text"
-          inputMode="numeric"
-          pattern="[0-9]*"
-          autoComplete="off"
-          value={amount}
-          onChange={(event) => onAmountChange(event.target.value)}
-          placeholder="5"
-          className="border px-3 py-2.5 text-base tabular-nums"
-          style={inputStyle}
-        />
-      </label>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            aria-label={copy.form.decrease}
+            disabled={amountNumber <= 1}
+            onClick={() => bump(-1)}
+            className="flex size-14 shrink-0 items-center justify-center text-2xl disabled:opacity-40"
+            style={{ background: 'var(--l-track)', borderRadius: '8px' }}
+          >
+            −
+          </button>
+          <div className="min-w-0 flex-1 text-center">
+            <input
+              required
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              autoComplete="off"
+              value={amount}
+              onChange={(event) => onAmountChange(event.target.value)}
+              className="w-full bg-transparent text-center font-display text-5xl leading-none tabular-nums tracking-tight outline-none"
+              aria-label={copy.form.amountLabel}
+            />
+            <p className="mt-1 text-sm" style={{ color: 'var(--l-muted)' }}>
+              {copy.unitHint}
+            </p>
+          </div>
+          <button
+            type="button"
+            aria-label={copy.form.increase}
+            onClick={() => bump(1)}
+            className="flex size-14 shrink-0 items-center justify-center text-2xl"
+            style={{ background: 'var(--l-track)', borderRadius: '8px' }}
+          >
+            +
+          </button>
+        </div>
+      </div>
 
       {quote ? (
         <p className="text-sm" style={{ color: 'var(--l-ink)' }}>
@@ -194,7 +223,7 @@ export default function BidForm({ lockedTarget, defaultName = '', defaultDescrip
         type="submit"
         disabled={submitting || !quote}
         className="px-4 py-3.5 text-base font-semibold disabled:opacity-50"
-        style={{ background: 'var(--l-accent)', color: 'var(--l-accentInk)', borderRadius: 'var(--l-radius)' }}
+        style={{ background: 'var(--l-accent)', color: 'var(--l-accentInk)', borderRadius: '8px' }}
       >
         {submitting ? copy.form.submitting : copy.form.submit}
       </button>

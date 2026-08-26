@@ -60,7 +60,7 @@ export default async function ListingPage({ params }: { params: Params }) {
   return (
     <div className="flex flex-col gap-8">
       <section>
-        <h1 className="text-2xl font-bold tracking-tight">{listing.displayName}</h1>
+        <h1 className="font-display text-4xl leading-tight tracking-tight">{listing.displayName}</h1>
         {listing.description ? <p className="mt-1 text-sm">{listing.description}</p> : null}
 
         <div className="mt-4">
@@ -91,7 +91,7 @@ export default async function ListingPage({ params }: { params: Params }) {
       </section>
 
       <section className="p-4" style={{ background: 'var(--l-card)', borderRadius: 'var(--l-radius)' }}>
-        <h2 className="text-lg font-semibold">{copy.ctaRaise}</h2>
+        <h2 className="font-display text-3xl leading-none">{copy.ctaRaise}</h2>
         <p className="mb-4 mt-1 text-xs" style={{ color: 'var(--l-muted)' }}>
           {copy.errors.belowMin(nextTotal)}
         </p>

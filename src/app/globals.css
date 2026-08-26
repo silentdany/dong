@@ -2,13 +2,23 @@
 
 html {
   color-scheme: dark;
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
   background: var(--l-bg);
   color: var(--l-ink);
   font-family: var(--l-font);
-  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: var(--l-display-font);
+}
+
+button:not(:disabled),
+[role='button']:not(:disabled),
+a {
+  cursor: pointer;
 }
 
 ::selection {

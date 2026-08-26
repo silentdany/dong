@@ -5,48 +5,51 @@
 
 export const theme = {
   colors: {
-    bg: '#09070b',
-    ink: '#f7f2ff',
-    muted: '#9b8fb0',
-    accent: '#ff1a6b',
-    accentInk: '#09070b',
-    track: '#1a1522',
-    fill: '#ff1a6b',
-    danger: '#ff4d6d',
-    card: '#120e18',
+    bg: '#110c12',
+    ink: '#f4eef2',
+    muted: '#a8949c',
+    accent: '#f0e6ea',
+    accentInk: '#110c12',
+    track: '#2e242e',
+    fill: '#8a3d9b',
+    danger: '#c45c4a',
+    card: '#1c151c',
   },
 
-  radius: '4px',
+  radius: '12px',
 
-  font: "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif",
+  font: "IBM Plex Sans, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif",
+  displayFont: "Instrument Serif, Iowan Old Style, Palatino, Georgia, serif",
 
   meter: {
     /** Drawn at the leading edge of the fill. Any character. '' to disable. */
-    cap: '›',
+    cap: '🍆',
     /** Smallest visible fill, so a $5 listing is still a mark and not nothing. */
     minPx: 18,
     /** Track width cap in px. 0 means no cap: the track fills the row. */
     maxPx: 0,
     /** Bar height, and the taller one used for the top ranks. */
-    heightPx: 11,
+    heightPx: 16,
     topHeightPx: 28,
     /** How many ranks get the tall bar and the big number. */
-    topRanks: 3,
+    topRanks: 1,
     /** Font size of the length figure, and the big one for the top ranks. */
-    valuePx: 15,
-    topValuePx: 34,
+    valuePx: 22,
+    topValuePx: 56,
     /** Fill growth animation. */
     growMs: 420,
   },
 
   /** Thresholds are cents, ascending. The highest one reached wins. */
   badges: [
-    { minCents: 0, label: 'micro' },
-    { minCents: 500, label: 'trying' },
-    { minCents: 2000, label: 'invested' },
-    { minCents: 10000, label: 'compensating' },
-    { minCents: 25000, label: 'unwell' },
-    { minCents: 100000, label: 'legendary' },
+    { minCents: 0, label: 'pretending' },
+    { minCents: 500, label: 'costume' },
+    { minCents: 2000, label: 'screenshot' },
+    { minCents: 5000, label: 'warming up' },
+    { minCents: 10000, label: 'public' },
+    { minCents: 25000, label: 'honest' },
+    { minCents: 100000, label: 'committed' },
+    { minCents: 250000, label: 'unwell' },
   ],
 } as const
 
@@ -69,5 +72,6 @@ export function themeCssVars(): string {
   }
   entries.push(`--l-radius: ${theme.radius};`)
   entries.push(`--l-font: ${theme.font};`)
+  entries.push(`--l-display-font: ${theme.displayFont};`)
   return `:root{${entries.join('')}}`
 }

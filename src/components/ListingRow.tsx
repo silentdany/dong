@@ -18,23 +18,29 @@ export default function ListingRow({ entry, rank, maxScoreCents, highlighted }: 
 
   return (
     <li
-      className="flex gap-2.5 p-3 sm:gap-3"
+      className="flex gap-3 p-4"
       style={{
         background: 'var(--l-card)',
         borderRadius: 'var(--l-radius)',
-        outline: highlighted ? '2px solid var(--l-accent)' : 'none',
+        outline: highlighted ? '1px solid color-mix(in oklab, var(--l-ink) 22%, transparent)' : 'none',
       }}
     >
-      <span className="w-7 shrink-0 pt-0.5 text-base font-bold tabular-nums sm:w-8 sm:text-lg" style={{ color: 'var(--l-muted)' }}>
-        {rank}
+      <span className="w-7 shrink-0 pt-1 text-sm font-medium tabular-nums" style={{ color: 'var(--l-muted)' }}>
+        {rank === 1 ? (
+          <span className="text-lg leading-none" aria-label="1">
+            {copy.logo}
+          </span>
+        ) : (
+          rank
+        )}
       </span>
 
       <div className="min-w-0 flex-1">
-        <div className="flex flex-wrap items-baseline gap-x-2">
-          <Link href={`/l/${entry.id}`} className="truncate font-semibold underline-offset-2 hover:underline">
+        <div className="flex items-baseline justify-between gap-3">
+          <Link href={`/l/${entry.id}`} className="truncate font-medium underline-offset-2 hover:underline">
             {entry.displayName}
           </Link>
-          <span className="text-xs" style={{ color: 'var(--l-muted)' }}>
+          <span className="shrink-0 text-xs uppercase tracking-wide" style={{ color: 'var(--l-muted)' }}>
             {badgeFor(entry.scoreCents)}
           </span>
         </div>
@@ -45,11 +51,11 @@ export default function ListingRow({ entry, rank, maxScoreCents, highlighted }: 
           </p>
         ) : null}
 
-        <div className="mt-2">
+        <div className="mt-3">
           <RankMeter scoreCents={entry.scoreCents} maxScoreCents={maxScoreCents} rank={rank} />
         </div>
 
-        <div className="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs" style={{ color: 'var(--l-muted)' }}>
+        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs" style={{ color: 'var(--l-muted)' }}>
           <span className="tabular-nums">{copy.ui.total(toDollars(entry.scoreCents))}</span>
           <a
             href={`/out/${entry.id}`}
@@ -60,8 +66,7 @@ export default function ListingRow({ entry, rank, maxScoreCents, highlighted }: 
             {label}
           </a>
           <span>{relativeTime(entry.createdAt)}</span>
-          <span className="tabular-nums">{copy.ui.clicks(entry.clickCount)}</span>
-          <Link href={`/l/${entry.id}`} className="font-medium underline underline-offset-2" style={{ color: 'var(--l-accent)' }}>
+          <Link href={`/l/${entry.id}`} className="font-medium underline-offset-2 hover:underline" style={{ color: 'var(--l-accent)' }}>
             {copy.ctaRaise}
           </Link>
         </div>
