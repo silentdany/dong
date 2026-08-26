@@ -201,12 +201,20 @@ export const copy = {
   duelOpen: "Make the link",
   duelChallenge: (name: string) => `Measure up vs ${name}`,
 
-  /** Sharing. Straight at the camera. */
+  /** Sharing. Newlines become real line breaks in the X compose box. */
   shareOnX: "Post on X",
   shareListing: (name: string, cm: number) =>
-    `Stop pretending. It was always about size. ${name} is ${cm} cm. What's yours?`,
+    [`Stop pretending.`, `It was always about size.`, `${name} is ${cm} cm.`, `What's yours?`].join(
+      "\n",
+    ),
   shareDuel: (a: string, aCm: number, b: string, bCm: number) =>
-    `Stop pretending. It was always about size. ${a}: ${aCm} cm. ${b}: ${bCm} cm. Choose who has the bigger.`,
+    [
+      `Stop pretending.`,
+      `It was always about size.`,
+      `${a}: ${aCm} cm.`,
+      `${b}: ${bCm} cm.`,
+      `Choose who has the bigger.`,
+    ].join("\n"),
   duelWho: "Which one is your little secret?",
   duelNew: "Still lurking, apparently",
   duelAs: (name: string) => `Send it as ${name}`,
