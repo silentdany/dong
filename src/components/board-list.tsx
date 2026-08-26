@@ -3,11 +3,12 @@ import { Link } from "@tanstack/react-router";
 import { DuelLaunch } from "@/components/duel-launch";
 import { LengthMeter } from "@/components/length-meter";
 import { ListingLogo } from "@/components/listing-logo";
+import { ShareOnX } from "@/components/share-on-x";
 import { badgeFor, copy } from "@/lib/copy";
 import type { ListingRow } from "@/lib/board";
 import { currentCents } from "@/lib/decay";
 import { useNow } from "@/lib/use-now";
-import { toDollars } from "@/lib/ranking";
+import { lengthCm, toDollars } from "@/lib/ranking";
 import { displayTarget } from "@/lib/target";
 import { cn } from "@/lib/utils";
 
@@ -151,7 +152,7 @@ export function BoardList({ entries, highlightId, leaderDollars, emptyText }: Pr
                     ) : null}
                   </p>
 
-                  <div className="relative z-10 mt-1 flex w-fit items-center gap-4 text-sm">
+                  <div className="relative z-10 mt-1 flex w-fit flex-wrap items-center gap-x-4 gap-y-0 text-sm">
                     <Link
                       to="/l/$id"
                       params={{ id: entry.id }}
@@ -166,6 +167,11 @@ export function BoardList({ entries, highlightId, leaderDollars, emptyText }: Pr
                     >
                       {copy.duelMark} {copy.duel}
                     </button>
+                    <ShareOnX
+                      compact
+                      text={copy.shareListing(entry.displayName, lengthCm(current))}
+                      path={`/l/${entry.id}`}
+                    />
                   </div>
                 </div>
               </div>
