@@ -7,7 +7,7 @@ import BidForm from '@/components/BidForm'
 import RankMeter from '@/components/RankMeter'
 import { prisma } from '@/lib/db'
 import { leaderTotalCents } from '@/lib/board'
-import { lengthMm, minTotalCents, toDollars, todayCutoff } from '@/lib/ranking'
+import { lengthCm, minTotalCents, toDollars, todayCutoff } from '@/lib/ranking'
 import { relativeTime } from '@/lib/time'
 
 export const dynamic = 'force-dynamic'
@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const listing = await getListing(id)
   if (!listing) return { title: copy.errors.notFound }
 
-  const mm = lengthMm(listing.allTimeCents)
+  const cm = lengthCm(listing.allTimeCents)
   const target = listing.targetType === 'handle' ? `@${listing.targetKey.slice('handle:'.length)}` : listing.targetUrl
   const title = copy.ui.detailTitle(listing.displayName)
   return {
@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     openGraph: {
       title,
       description: listing.description || copy.ogDescription,
-      images: [`/og?mm=${mm}&handle=${encodeURIComponent(target)}`],
+      images: [`/og?cm=${cm}&handle=${encodeURIComponent(target)}`],
     },
   }
 }
@@ -75,7 +75,7 @@ export default async function ListingPage({ params }: { params: Params }) {
           <div>
             <dt style={{ color: 'var(--l-muted)' }}>{copy.boardToday}</dt>
             <dd className="font-semibold tabular-nums">
-              {copy.unitLabel(lengthMm(todayCents))} · {copy.ui.total(toDollars(todayCents))}
+              {copy.unitLabel(lengthCm(todayCents))} · {copy.ui.total(toDollars(todayCents))}
             </dd>
           </div>
         </dl>

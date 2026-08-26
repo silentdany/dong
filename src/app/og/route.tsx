@@ -11,12 +11,12 @@ const TRACK = WIDTH - PAD * 2
 const BAR_HEIGHT = 32
 const HALO = 54
 
-/** /og?mm=…&handle=…&ratio=… — the same card serves the site and any listing. */
+/** /og?cm=…&handle=…&ratio=… — the same card serves the site and any listing. */
 export function GET(request: Request) {
   const params = new URL(request.url).searchParams
-  const mm = Math.max(0, Number(params.get('mm') ?? params.get('cm') ?? 0) || 0)
+  const cm = Math.max(0, Number(params.get('cm') ?? params.get('mm') ?? 0) || 0)
   const handle = params.get('handle') ?? params.get('name') ?? copy.domain
-  const ratio = mm > 0 ? Math.min(1, Math.max(0, Number(params.get('ratio') ?? 1) || 1)) : 0
+  const ratio = cm > 0 ? Math.min(1, Math.max(0, Number(params.get('ratio') ?? 1) || 1)) : 0
   const prefix = theme.meter.prefix
   const tip = theme.meter.tip
 
@@ -39,7 +39,7 @@ export function GET(request: Request) {
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 16, fontSize: 190, fontWeight: 700, letterSpacing: -8, lineHeight: 1, color: theme.colors.accent }}>
             {prefix ? <span style={{ fontSize: 120 }}>{prefix}</span> : null}
-            <span>{copy.unitLabel(mm)}</span>
+            <span>{copy.unitLabel(cm)}</span>
           </div>
 
           <div

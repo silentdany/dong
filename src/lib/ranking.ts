@@ -3,13 +3,10 @@ export const RAISE_STEP_CENTS = 100
 export const TAKE_TOP_LEAD_CENTS = 500
 export const TODAY_WINDOW_MS = 24 * 60 * 60 * 1000
 
-/** $1 = 1 mm, and partial dollars buy nothing. */
-export function lengthMm(scoreCents: number): number {
+/** $1 = 1 cm, and partial dollars buy nothing. */
+export function lengthCm(scoreCents: number): number {
   return Math.floor(scoreCents / 100)
 }
-
-/** @deprecated use lengthMm */
-export const lengthCm = lengthMm
 
 export function toDollars(cents: number): number {
   return Math.floor(cents / 100)
