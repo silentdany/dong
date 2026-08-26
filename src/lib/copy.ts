@@ -75,6 +75,10 @@ export const copy = {
   statsUrl: "https://datafa.st/share/6a8efd8f7011d4b609dc823b",
   /** Accessible name for the card-wide link out to what a listing is promoting. */
   visit: (target: string) => `Visit ${target}`,
+  /** The blink between the board and whatever a listing paid to promote. */
+  leaving: "Leaving the board…",
+  leavingGone: "That listing is gone. Back to the board.",
+  backToBoard: "Back to the board",
   /** Clicks a single listing has sent to its target. */
   clicks: (n: number) => `${n.toLocaleString("en-US")} ${n === 1 ? "click" : "clicks"}`,
 

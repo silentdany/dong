@@ -129,7 +129,15 @@ function DuelSide({
             {row.displayName}
           </h2>
           <p className="truncate text-xs text-muted">
-            {displayTarget(row.targetType, row.targetKey, row.targetUrl)}
+            {/* A duel is a shop window too. Plain text here meant a duel could
+                send its audience nowhere and earn its sides no clicks. */}
+            <a
+              href={`/out/${row.id}`}
+              rel="nofollow noopener sponsored"
+              className="underline-offset-2 hover:underline"
+            >
+              {displayTarget(row.targetType, row.targetKey, row.targetUrl)}
+            </a>
           </p>
         </div>
       </div>
