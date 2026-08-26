@@ -1,5 +1,6 @@
-import { readdirSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import type { Plugin } from "vite";
 import { defineConfig } from "vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
@@ -12,7 +13,56 @@ import { grokPwaPlugin } from "./scripts/grok-pwa-plugin.mjs";
 import { appEnvPlugin } from "./scripts/app-env-plugin.mjs";
 import { isMigrationFile } from "./scripts/migration-plan.mjs";
 
-/** The files `src/lib/db.ts` globs — same directory, same non-recursive scope. */
+function inlineOgBinaries(): Plugin {
+  const hbVirtual = "virtual:og-hb-wasm";
+  const hbResolved = "\0" + hbVirtual;
+  const hbFile = fileURLToPath(new URL("./node_modules/harfbuzzjs/hb.wasm", import.meta.url));
+  return {
+    name: "inline-og-binaries",
+    enforce: "pre",
+    resolveId(id) {
+      if (id === hbVirtual) return hbResolved;
+    },
+    load(id) {
+      if (id === hbResolved) {
+        const buf = readFileSync(hbFile);
+        return `export default Buffer.from("${buf.toString("base64")}", "base64");`;
+      }
+      const file = id.split("?")[0] ?? id;
+      if (!file.endsWith(".ttf") && !file.endsWith(".wasm")) return;
+      const norm = file.replaceAll("\\", "/");
+      const keep =
+        file.endsWith(".ttf") ||
+        norm.endsWith("/yoga.wasm") ||
+        norm.endsWith("/index_bg.wasm") ||
+        norm.endsWith("/resvg.wasm") ||
+        norm.endsWith("/hb.wasm");
+      if (!keep) return;
+      const buf = readFileSync(file);
+      return `export default Buffer.from("${buf.toString("base64")}", "base64");`;
+    },
+  };
+}
+
+/** Emscripten's hb.js reads CJS `__dirname` before wasmBinary is applied. */
+function patchHarfbuzzHb(): Plugin {
+  return {
+    name: "patch-harfbuzz-hb",
+    transform(code, id) {
+      const norm = (id.split("?")[0] ?? id).replaceAll("\\", "/");
+      if (!norm.endsWith("/harfbuzzjs/hb.js")) return;
+      if (!code.includes("__dirname")) return;
+      return {
+        code: code.replace(
+          /scriptDirectory\s*=\s*__dirname\s*\+\s*["']\/["']/,
+          'scriptDirectory="."+"/"',
+        ),
+        map: null,
+      };
+    },
+  };
+}
+
 function hasGlobbedMigrations(root: string): boolean {
   try {
     return readdirSync(join(root, "migrations")).some(isMigrationFile);
@@ -142,6 +192,8 @@ function authPopupPlugin(): Plugin {
   };
 }
 
+const harfbuzzReplacement = fileURLToPath(new URL("./src/lib/og/harfbuzz.ts", import.meta.url));
+
 // `0.0.0.0:8080` is the live-preview contract — don't change host/port.
 // The dev server starts once `src/router.tsx` and `src/routes/` exist — see
 // AGENTS.md § "First scaffold".
@@ -156,15 +208,17 @@ export default defineConfig(({ command, isPreview }) => ({
     port: 8081,
     strictPort: true,
   },
-  resolve: { tsconfigPaths: true },
-  assetsInclude: ["**/*.ttf"],
-  ssr: {
-    external: ["@resvg/resvg-wasm"],
+  resolve: {
+    tsconfigPaths: true,
+    alias: [{ find: /^harfbuzzjs$/, replacement: harfbuzzReplacement }],
   },
+  assetsInclude: ["**/*.ttf", "**/*.wasm"],
   optimizeDeps: {
-    exclude: ["@resvg/resvg-wasm", "@resvg/resvg-js"],
+    exclude: ["@resvg/resvg-wasm", "satori", "satori/standalone", "harfbuzzjs"],
   },
   plugins: [
+    inlineOgBinaries(),
+    patchHarfbuzzHb(),
     pgliteBootstrapPlugin(),
     // Before tanstackStart so /auth/popup never falls through to the SPA.
     authPopupPlugin(),
