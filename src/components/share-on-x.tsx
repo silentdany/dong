@@ -12,10 +12,14 @@ function XMark({ className }: { className?: string }) {
   );
 }
 
+/**
+ * One query param only. Passing text= and url= separately makes X flatten the
+ * body into a single line. Fold the canonical URL into the text (after a blank
+ * line) so %0A survives into the compose box and the OG card still attaches.
+ */
 function intentHref(text: string, path: string) {
-  return `https://x.com/intent/post?text=${encodeURIComponent(text)}&url=${encodeURIComponent(
-    canonical(path),
-  )}`;
+  const body = `${text}\n\n${canonical(path)}`;
+  return `https://x.com/intent/post?text=${encodeURIComponent(body)}`;
 }
 
 /**
