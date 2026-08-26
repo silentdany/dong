@@ -1,6 +1,6 @@
 import { currentCents, snapshotFromPayments } from "@/lib/decay";
 import { getSql } from "@/lib/db";
-import { toDollars } from "@/lib/ranking";
+import { lengthCm } from "@/lib/ranking";
 
 type PayRow = { listing_id: string; amount_cents: number; created_at: string };
 type ListingRow = { id: string; all_time_cents: number; created_at: string };
@@ -34,5 +34,5 @@ export async function currentLeaderDollars(excludeId?: string): Promise<number> 
       : snapshotFromPayments([{ amountCents: row.all_time_cents, createdAt: iso(row.created_at) }]);
     max = Math.max(max, currentCents(snap, now));
   }
-  return toDollars(max);
+  return lengthCm(max);
 }

@@ -57,7 +57,7 @@ export function LengthMeter({ snap, now, maxCents, featured, rank }: Props) {
   const scale = Math.max(maxCents, peak, 1);
   const liveRatio = Math.min(1, live / scale);
   const peakRatio = Math.min(1, peak / scale);
-  const lostCm = Math.max(0, lengthCm(peak) - lengthCm(live));
+  const lostCm = Math.max(0, lengthCm(snap.levelAtLastPay) - lengthCm(live));
   const label = copy.unitLabel(lengthCm(live));
   const [grown, setGrown] = useState(false);
   const t = TIER[tierFromRank(rank, featured)];

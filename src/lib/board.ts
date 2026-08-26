@@ -5,6 +5,7 @@ import { getSql } from "@/lib/db";
 import {
   projectedRank,
   quoteAmount,
+  lengthCm,
   toDollars,
   type RankRow,
 } from "@/lib/ranking";
@@ -51,7 +52,6 @@ function iso(value: string | Date): string {
 
 function mapListing(row: DbListing, snap: DecaySnapshot, now = Date.now()): ListingRow {
   const createdAt = iso(row.created_at);
-  const peakCents = Math.max(snap.peakCents, row.all_time_cents);
   return {
     id: row.id,
     displayName: row.display_name,
@@ -65,7 +65,9 @@ function mapListing(row: DbListing, snap: DecaySnapshot, now = Date.now()): List
     scoreCents: currentCents(snap, now),
     levelAtLastPay: snap.levelAtLastPay,
     lastPaidAt: snap.lastPaidAt,
-    peakCents,
+    // Peak is max live length, not lifetime spend — mixing the two showed
+    // "−1 cm" the moment a raise didn't fully cover gravity between pays.
+    peakCents: snap.peakCents,
   };
 }
 
@@ -172,10 +174,10 @@ export const getLeader = createServerFn({ method: "GET" }).handler(async () => {
   `;
   const rows = await hydrate(listings, pays);
   const top = rows.reduce((m, row) => Math.max(m, row.scoreCents), 0);
-  return toDollars(top);
+  return lengthCm(top);
   } catch {
     const top = seedListings().reduce((m, row) => Math.max(m, row.scoreCents), 0);
-    return toDollars(top);
+    return lengthCm(top);
   }
 });
 
@@ -373,10 +375,16 @@ export const startCheckout = createServerFn({ method: "POST" })
   });
 
 export const fulfillPaidSession = createServerFn({ method: "GET" })
-  .validator(z.object({ sessionId: z.string().min(1).max(200) }))
+  .validator(z.object({ sessionId: z.string().max(200).optional() }))
   .handler(async ({ data }) => {
-    const { fulfillCheckoutSessionId } = await import("@/lib/pay");
-    return fulfillCheckoutSessionId(data.sessionId);
+    const { fulfillCheckoutSessionId, paidRedirectHref } = await import("@/lib/pay");
+    const sessionId = data.sessionId?.trim() ?? "";
+    if (!sessionId.startsWith("cs_")) {
+      const returnPath = "/?paid=1";
+      return { listingId: null as string | null, returnPath, href: paidRedirectHref(returnPath) };
+    }
+    const result = await fulfillCheckoutSessionId(sessionId);
+    return { ...result, href: paidRedirectHref(result.returnPath) };
   });
 
 export const trackClick = createServerFn({ method: "POST" })

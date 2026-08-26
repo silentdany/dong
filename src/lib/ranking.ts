@@ -10,8 +10,14 @@ export function toCents(dollars: number) {
   return Math.round(dollars) * 100;
 }
 
+/**
+ * Whole centimetres still on the ruler. $1 = 1 cm, and a centimetre stays
+ * until a full hour of gravity has eaten it — so 14 minutes after paying $10
+ * is still 10 cm, not 9.
+ */
 export function lengthCm(cents: number) {
-  return toDollars(cents);
+  if (cents <= 0) return 0;
+  return Math.ceil(cents / 100 - 1e-9);
 }
 
 export function costToTakeTop(leaderDollars: number) {

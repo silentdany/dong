@@ -1,4 +1,4 @@
-/** 1 cm ($1) leaks every hour. Fractional so the bar can crawl. */
+/** 1 cm ($1) leaks every hour. Fractional so the bar can crawl; the number holds until the centimetre is gone. */
 export const DECAY_CENTS_PER_HOUR = 100;
 
 export type PayEvent = {
