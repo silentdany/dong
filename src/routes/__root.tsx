@@ -25,6 +25,16 @@ export const Route = createRootRoute({
         href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap",
       },
     ],
+    // DataFast. `head.scripts` is the router's `headScripts`, so <HeadContent />
+    // renders this in <head> on every route — the whole site, not just the board.
+    scripts: [
+      {
+        src: "https://datafa.st/js/script.js",
+        defer: true,
+        "data-website-id": "dfid_rHDZXRIvVo3j9Gv6dnTGO",
+        "data-domain": "epenis.lol",
+      },
+    ],
   }),
   component: RootShell,
 });
