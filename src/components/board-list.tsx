@@ -140,6 +140,12 @@ export function BoardList({ entries, highlightId, leaderDollars, emptyText }: Pr
                     </a>
                     <span aria-hidden> · </span>
                     <span>{relativeTime(entry.lastPaidAt ?? entry.createdAt)}</span>
+                    {entry.clickCount > 0 ? (
+                      <>
+                        <span aria-hidden> · </span>
+                        <span className="tabular-nums">{copy.clicks(entry.clickCount)}</span>
+                      </>
+                    ) : null}
                   </p>
 
                   <div className="mt-2 flex items-center gap-4 text-sm">

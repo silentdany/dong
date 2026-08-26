@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { LiveStatsPill } from "@/components/live-stats";
 import { SiteHeader } from "@/components/site-header";
 import { copy } from "@/lib/copy";
 
@@ -17,7 +18,10 @@ export function AppShell({
     >
       <SiteHeader />
       <main className="flex-1 pt-6">{children}</main>
-      <footer className="mt-10 border-t border-border pt-4 text-xs leading-relaxed text-subtle">
+      <div className="mt-10 flex justify-center">
+        <LiveStatsPill href={copy.statsUrl} />
+      </div>
+      <footer className="mt-6 border-t border-border pt-4 text-xs leading-relaxed text-subtle">
         <p>{copy.footer}</p>
         <p className="mt-2">
           {copy.creditPrefix}{" "}
