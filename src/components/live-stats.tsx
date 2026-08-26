@@ -54,14 +54,16 @@ export function LiveStatsPill({ href }: { href?: string }) {
 
   return (
     <div
-      className="flex items-center justify-center rounded-full bg-surface px-4 py-2 text-xs text-muted"
+      className="flex max-w-full items-center justify-center rounded-full bg-surface px-4 py-2 text-center text-xs text-muted"
       aria-live="polite"
     >
       <span className="relative mr-2 flex size-2 shrink-0" aria-hidden>
         <span className="absolute inline-flex size-full animate-ping rounded-full bg-live opacity-75" />
         <span className="relative inline-flex size-2 rounded-full bg-live" />
       </span>
-      <span className="truncate">
+      {/* Wraps rather than truncates: on a narrow phone the counters matter more
+          than the pill staying one line, and truncating drops the last one. */}
+      <span className="min-w-0">
         <span className="font-medium tabular-nums text-fg">{copy.stats.online(stats.online)}</span>
         <span aria-hidden> · </span>
         <span className="tabular-nums">{copy.stats.visitors(stats.visitors)}</span>
@@ -74,7 +76,7 @@ export function LiveStatsPill({ href }: { href?: string }) {
               href={href}
               target="_blank"
               rel="noreferrer noopener"
-              className="text-muted underline decoration-border underline-offset-2 transition-colors duration-150 hover:text-fg"
+              className="inline-block py-1.5 text-muted underline decoration-border underline-offset-2 transition-colors duration-150 hover:text-fg"
             >
               {copy.stats.seeStats}
               <span aria-hidden>→</span>

@@ -9,7 +9,9 @@
   --color-elevated: #251c25;
   --color-fg: #f4eef2;
   --color-muted: #a8949c;
-  --color-subtle: #6f5e66;
+  /* 4.5:1 on --color-bg: this carries the row meta line and the footer at
+     text-xs, which is small text and gets no large-text exemption. */
+  --color-subtle: #8d7b86;
   --color-accent: #f0e6ea;
   --color-accent-fg: #110c12;
   --color-border: color-mix(in oklab, var(--color-fg) 12%, transparent);

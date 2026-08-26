@@ -30,18 +30,18 @@ export function AppShell({
             href={copy.creditUrl}
             target="_blank"
             rel="noreferrer noopener"
-            className="font-medium text-muted underline decoration-border underline-offset-2 transition-colors duration-150 hover:text-fg"
+            className="inline-block py-1 font-medium text-muted underline decoration-border underline-offset-2 transition-colors duration-150 hover:text-fg"
           >
             {copy.creditHandle}
           </a>
           . {copy.creditSuffix}
         </p>
-        <p className="mt-3 flex items-center gap-3">
-          <Link to="/terms" className="text-muted underline decoration-border underline-offset-2 hover:text-fg">
+        <p className="mt-2 flex items-center gap-3">
+          <Link to="/terms" className="inline-block py-1.5 text-muted underline decoration-border underline-offset-2 hover:text-fg">
             {copy.termsNav}
           </Link>
           <span aria-hidden>·</span>
-          <Link to="/privacy" className="text-muted underline decoration-border underline-offset-2 hover:text-fg">
+          <Link to="/privacy" className="inline-block py-1.5 text-muted underline decoration-border underline-offset-2 hover:text-fg">
             {copy.privacyNav}
           </Link>
         </p>

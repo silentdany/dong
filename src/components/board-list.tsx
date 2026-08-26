@@ -151,17 +151,17 @@ export function BoardList({ entries, highlightId, leaderDollars, emptyText }: Pr
                     ) : null}
                   </p>
 
-                  <div className="relative z-10 mt-2 flex w-fit items-center gap-4 text-sm">
+                  <div className="relative z-10 mt-1 flex w-fit items-center gap-4 text-sm">
                     <Link
                       to="/l/$id"
                       params={{ id: entry.id }}
-                      className="font-medium text-accent underline-offset-2 hover:underline"
+                      className="inline-block py-1.5 font-medium text-accent underline-offset-2 hover:underline"
                     >
                       {copy.raiseMark} {copy.raise}
                     </Link>
                     <button
                       type="button"
-                      className="font-medium text-fg underline-offset-2 hover:underline"
+                      className="inline-block py-1.5 font-medium text-fg underline-offset-2 hover:underline"
                       onClick={() => setDuelVs(entry)}
                     >
                       {copy.duelMark} {copy.duel}
