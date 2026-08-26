@@ -63,6 +63,19 @@ export const copy = {
   cancel: "Keep pretending",
   submitting: "Dropping the act…",
   justPaid: "Paid. That's the only screenshot that counts.",
+  /** The live counters under the board. */
+  stats: {
+    online: (n: number) => `${n.toLocaleString("en-US")} online`,
+    visitors: (n: number) =>
+      `${n.toLocaleString("en-US")} ${n === 1 ? "visitor" : "visitors"} since launch`,
+    clicks: (n: number) => `${n.toLocaleString("en-US")} ${n === 1 ? "click" : "clicks"} on bids`,
+    seeStats: "see stats",
+  },
+  /** Public analytics dashboard the pill links to. "" hides the link. */
+  statsUrl: "",
+  /** Clicks a single listing has sent to its target. */
+  clicks: (n: number) => `${n.toLocaleString("en-US")} ${n === 1 ? "click" : "clicks"}`,
+
   footer: "A public receipt. Keep pretending the rank is marketing.",
   creditPrefix: "Shipped by",
   creditHandle: "@MajorBaguette",
