@@ -47,7 +47,19 @@ function apiKey(): string | undefined {
   return key || undefined;
 }
 
-async function get(path: string, key: string): Promise<unknown | null> {
+/** Enough of a body to see what came back, not enough to flood the log. */
+const LOG_BODY_MAX = 300;
+
+/**
+ * One number out of one endpoint, or null with a reason in the log.
+ *
+ * A 200 we cannot read is the failure worth shouting about: nothing throws,
+ * the caller quietly falls back to our own counters, and the pill goes on
+ * showing a number nobody can reconcile with the dashboard it links to. So the
+ * body goes in the log whenever it does not yield the field — same for an
+ * error status, where the body is the API telling us why.
+ */
+async function read(path: string, key: string, field: string): Promise<number | null> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
   try {
@@ -55,11 +67,16 @@ async function get(path: string, key: string): Promise<unknown | null> {
       headers: { authorization: `Bearer ${key}`, accept: "application/json" },
       signal: controller.signal,
     });
+    const text = await response.text();
     if (!response.ok) {
-      console.error(`[datafast] GET ${path} → ${response.status}`);
+      console.error(`[datafast] GET ${path} → ${response.status} ${clip(text)}`);
       return null;
     }
-    return await response.json();
+    const value = pick(text, field);
+    if (value === null) {
+      console.error(`[datafast] GET ${path} → 200 with no "${field}" in ${clip(text)}`);
+    }
+    return value;
   } catch (error) {
     console.error(`[datafast] GET ${path} failed`, error);
     return null;
@@ -68,11 +85,22 @@ async function get(path: string, key: string): Promise<unknown | null> {
   }
 }
 
+function clip(text: string): string {
+  const flat = text.replace(/\s+/g, " ").trim();
+  return flat.length > LOG_BODY_MAX ? `${flat.slice(0, LOG_BODY_MAX)}…` : flat;
+}
+
 /**
  * Both endpoints answer with either an object or a one-element array — the
  * official CLI unmarshals both — so read the field through the same door.
  */
-function readNumber(body: unknown, field: string): number | null {
+function pick(text: string, field: string): number | null {
+  let body: unknown;
+  try {
+    body = JSON.parse(text);
+  } catch {
+    return null;
+  }
   const row = Array.isArray(body) ? body[0] : body;
   if (!row || typeof row !== "object") return null;
   const value = (row as Record<string, unknown>)[field];
@@ -91,7 +119,7 @@ function today(): string {
 /** People on the site right now, per DataFast. */
 async function realtimeOnline(key: string): Promise<number | null> {
   if (fresh(realtimeCache, REALTIME_TTL_MS)) return realtimeCache.value;
-  const value = readNumber(await get("/analytics/realtime", key), "visitors");
+  const value = await read("/analytics/realtime", key, "visitors");
   realtimeCache = { at: Date.now(), value };
   return value;
 }
@@ -100,7 +128,7 @@ async function realtimeOnline(key: string): Promise<number | null> {
 async function overviewVisitors(key: string): Promise<number | null> {
   if (fresh(overviewCache, OVERVIEW_TTL_MS)) return overviewCache.value;
   const query = `?startAt=${LAUNCH_DATE}&endAt=${today()}&timezone=UTC`;
-  const value = readNumber(await get(`/analytics/overview${query}`, key), "visitors");
+  const value = await read(`/analytics/overview${query}`, key, "visitors");
   overviewCache = { at: Date.now(), value };
   return value;
 }
