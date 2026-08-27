@@ -1,20 +1,22 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { z } from "zod";
 import { BoardPage } from "@/components/board-page";
 import { getBoard, getLeader } from "@/lib/board";
 import { copy } from "@/lib/copy";
 import { ogAltBoard, ogBoard, ogSideFromListing } from "@/lib/og/links";
 import { costToTakeTop, lengthCm } from "@/lib/ranking";
+import { paidSearch } from "@/lib/search";
 import { boardJsonLd, jsonLdScript, seoHead } from "@/lib/seo";
 
-const searchSchema = z.object({
-  paid: z.string().optional(),
-  l: z.string().optional(),
-  board: z.enum(["today", "all"]).optional(),
+const searchSchema = paidSearch.extend({
+  board: paidSearch.shape.paid.innerType
+    ? undefined
+    : undefined,
 });
 
 export const Route = createFileRoute("/")({
-  validateSearch: searchSchema,
+  validateSearch: paidSearch.extend({
+    board: (await import("zod")).z.enum(["today", "all"]).optional(),
+  } as never),
   beforeLoad: ({ search }) => {
     if (search.board === "today") {
       throw redirect({
