@@ -14,6 +14,7 @@ import {
 import { SITE_ORIGIN } from "@/lib/seo";
 import { quoteAmount, toCents, toDollars } from "@/lib/ranking";
 import { currentLeaderDollars } from "@/lib/leader";
+import { datafastStripeMetadata } from "@/lib/datafast";
 import { parseTarget } from "@/lib/target";
 
 type DbListing = {
@@ -108,6 +109,14 @@ function appOrigin(): string {
 
 export function paidRedirectHref(returnPath: string): string {
   return publicPaidHref(returnPath, requestParts().host, SITE_ORIGIN);
+}
+
+function requestCookieHeader(): string | null {
+  try {
+    return getRequest()?.headers.get("cookie") ?? null;
+  } catch {
+    return null;
+  }
 }
 
 let stripeClient: Stripe | null | undefined;
@@ -379,6 +388,7 @@ export async function startCheckout(input: CheckoutInput): Promise<CheckoutResul
 
     const origin = appOrigin();
     const description = (input.description ?? "").slice(0, 140);
+    const datafast = datafastStripeMetadata(requestCookieHeader());
     const session = await client.checkout.sessions.create({
       mode: "payment",
       client_reference_id: listingId,
@@ -402,11 +412,13 @@ export async function startCheckout(input: CheckoutInput): Promise<CheckoutResul
         chargeCents: String(chargeCents),
         description,
         returnPath: successPath,
+        ...datafast,
       },
       payment_intent_data: {
         metadata: {
           listingId,
           targetKey: parsed.key,
+          ...datafast,
         },
       },
       success_url: `${origin}/paid?session_id={CHECKOUT_SESSION_ID}`,
