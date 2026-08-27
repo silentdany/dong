@@ -1,19 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { z } from "zod";
 import { BoardPage } from "@/components/board-page";
 import { getBoard, getLeader } from "@/lib/board";
 import { copy } from "@/lib/copy";
 import { ogAltBoard, ogBoard, ogSideFromListing } from "@/lib/og/links";
 import { costToTakeTop, lengthCm } from "@/lib/ranking";
+import { paidSearch } from "@/lib/search";
 import { boardJsonLd, jsonLdScript, seoHead } from "@/lib/seo";
 
-const searchSchema = z.object({
-  paid: z.string().optional(),
-  l: z.string().optional(),
-});
-
 export const Route = createFileRoute("/today")({
-  validateSearch: searchSchema,
+  validateSearch: paidSearch,
   loader: async () => {
     const [entries, leader] = await Promise.all([
       getBoard({ data: { window: "today" } }),
