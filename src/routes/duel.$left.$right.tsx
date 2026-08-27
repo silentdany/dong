@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
-import { z } from "zod";
 import { Copy } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { BidForm } from "@/components/bid-form";
@@ -13,6 +12,7 @@ import type { ListingRow } from "@/lib/board";
 import { copy } from "@/lib/copy";
 import { currentCents } from "@/lib/decay";
 import { lengthCm, toDollars } from "@/lib/ranking";
+import { paidSearch } from "@/lib/search";
 import { displayTarget } from "@/lib/target";
 import { useNow } from "@/lib/use-now";
 import { cn } from "@/lib/utils";
@@ -20,10 +20,7 @@ import { seoHead } from "@/lib/seo";
 import { ogAltDuel, ogDuel, ogSideFromListing } from "@/lib/og/links";
 
 export const Route = createFileRoute("/duel/$left/$right")({
-  validateSearch: z.object({
-    paid: z.string().optional(),
-    l: z.string().optional(),
-  }),
+  validateSearch: paidSearch,
   loader: async ({ params }) => {
     if (params.left === params.right) throw notFound();
     const [left, right, leader] = await Promise.all([
@@ -130,8 +127,6 @@ function DuelSide({
             {row.displayName}
           </h2>
           <p className="truncate text-xs text-muted">
-            {/* A duel is a shop window too. Plain text here meant a duel could
-                send its audience nowhere and earn its sides no clicks. */}
             <a
               href={`/out/${row.id}`}
               rel="nofollow noopener sponsored"
