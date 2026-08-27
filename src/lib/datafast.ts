@@ -7,9 +7,9 @@
  * rows matching a search over an undocumented default window, which is a
  * different question that happens to return a plausible number.
  *
- * Endpoints, bearer auth and response shapes follow the official CLI
- * (github.com/dqhieu/datafast-cli) — the docs do not spell the last one out,
- * and both routes answer with either an object or a one-element array.
+ * Endpoints and bearer auth follow the official CLI
+ * (github.com/dqhieu/datafast-cli). The response shape is not documented
+ * anywhere: the number sits two layers down, inside `data[0]`.
  *
  * Reads are cached per instance: their API is rate-limited and the pill polls
  * every 30s per viewer. A failure is cached too, so an outage costs one slow
@@ -90,10 +90,6 @@ function clip(text: string): string {
   return flat.length > LOG_BODY_MAX ? `${flat.slice(0, LOG_BODY_MAX)}…` : flat;
 }
 
-/**
- * Both endpoints answer with either an object or a one-element array — the
- * official CLI unmarshals both — so read the field through the same door.
- */
 function pick(text: string, field: string): number | null {
   let body: unknown;
   try {
@@ -101,11 +97,25 @@ function pick(text: string, field: string): number | null {
   } catch {
     return null;
   }
-  const row = Array.isArray(body) ? body[0] : body;
+  const row = unwrap(body);
   if (!row || typeof row !== "object") return null;
   const value = (row as Record<string, unknown>)[field];
   const n = typeof value === "string" ? Number(value) : value;
   return typeof n === "number" && Number.isFinite(n) && n >= 0 ? Math.round(n) : null;
+}
+
+/**
+ * Answers arrive as `{"status":"success","data":[{…}]}` — the row is two levels
+ * down. The array holds one element for these two endpoints, and the envelope
+ * is not always there, so peel whichever layers this response actually has
+ * rather than assuming the shape.
+ */
+function unwrap(body: unknown): unknown {
+  const envelope =
+    body && typeof body === "object" && !Array.isArray(body) && "data" in body
+      ? (body as { data: unknown }).data
+      : body;
+  return Array.isArray(envelope) ? envelope[0] : envelope;
 }
 
 function fresh<T>(cache: Cache<T>, ttl: number): cache is { at: number; value: T } {

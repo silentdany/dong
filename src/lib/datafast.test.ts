@@ -33,8 +33,8 @@ describe("datafastStripeMetadata", () => {
  * One live read per process: the module caches per instance, so a second call
  * would be answered from that cache rather than from the stub. Asserting the
  * whole request in a single pass is what that buys, and it is the part worth
- * locking down — an earlier version read a paginated search total off the wrong
- * endpoint and reported it as "visitors since launch".
+ * locking down: the URLs, and the two layers of wrapping between the response
+ * and the number.
  */
 describe("datafastStats", () => {
   it("reads realtime and overview, and tolerates both response shapes", async () => {
@@ -45,9 +45,14 @@ describe("datafastStats", () => {
     globalThis.fetch = (async (input: unknown, init: RequestInit | undefined) => {
       const url = String(input);
       calls.push({ url, auth: (init?.headers as Record<string, string>)?.authorization });
-      // DataFast answers with an object on some routes and a one-element array
-      // on others, and numbers sometimes arrive as strings.
-      const body = url.includes("/realtime") ? [{ visitors: 291 }] : { visitors: "1366929" };
+      // Production answers `{"status":"success","data":[{…}]}`. Reading the
+      // field off the envelope instead of the row inside it is what made the
+      // pill show local counters while claiming to show DataFast's. The bare
+      // array below covers the unwrapped shape, and the string covers a number
+      // that does not arrive as one.
+      const body = url.includes("/realtime")
+        ? { status: "success", data: [{ visitors: 291, pageviews: 900 }] }
+        : [{ visitors: "1366929", sessions: 2000 }];
       return new Response(JSON.stringify(body), { status: 200 });
     }) as typeof fetch;
     process.env.DATAFAST_API_KEY = "df_test_key";
