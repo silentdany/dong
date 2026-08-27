@@ -1,4 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="20" fill="#110c12"/>
-  <text x="50" y="54" font-size="68" text-anchor="middle" dominant-baseline="central" font-family="Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, Noto Emoji, sans-serif">🍆</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="7" fill="#110c12"/>
+  <g transform="translate(2.5 2.5) scale(0.75)">
+    <path fill="#744EAA" d="M6 4c3 0 5 2 8 6s7.957 7.191 12 8c5 1 9 5 9 11 0 4.897-3.846 7-9 7-5 0-9-3-14-8S2 14 2 10s1-6 4-6z"/>
+    <path fill="#77B255" d="M3.515 0c1.248 0 1.248 1.248 1.248 2.495 0 1.764 1.248 1.129 2.496 1.129C8.505 3.624 11 6 11 6H7.258c-1.248 0 0 2.614-1.248 2.614S4.762 7.426 3.515 7.426 2 11 2 11s-1.604-4.153.267-6.024C3.515 3.728 1.02 0 3.515 0z"/>
+  </g>
 </svg>
