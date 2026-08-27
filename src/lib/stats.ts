@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { datafastVisitors } from "@/lib/datafast";
+import { datafastStats } from "@/lib/datafast";
 import { getSql } from "@/lib/db";
 
 /**
@@ -66,13 +66,15 @@ export const pulse = createServerFn({ method: "POST" })
       `;
       const row = rows[0];
       // DataFast counts visitors for a living and filters bots; our own table
-      // only counts browsers that kept their id. Prefer theirs, keep ours as
-      // the floor so the pill still reads when the key is unset or they are down.
-      const vendor = await datafastVisitors();
+      // only counts browsers that kept their id, and only while they are on a
+      // page that pings. Prefer theirs for both people-numbers, keep ours as the
+      // fallback so the pill still reads when the key is unset or they are down.
+      // Clicks are ours either way — DataFast never sees the outbound hop.
+      const vendor = await datafastStats();
       const stats = row
         ? {
-            online: Number(row.online),
-            visitors: vendor ?? Number(row.visitors),
+            online: vendor.online ?? Number(row.online),
+            visitors: vendor.visitors ?? Number(row.visitors),
             clicks: Number(row.clicks),
           }
         : EMPTY;
