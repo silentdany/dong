@@ -4,8 +4,7 @@ import { datafastStripeMetadata } from "./datafast.ts";
 
 describe("datafastStripeMetadata", () => {
   it("copies both DataFast cookies onto Stripe metadata", () => {
-    const header =
-      "datafast_visitor_id=vis_abc; datafast_session_id=ses_xyz; other=nope";
+    const header = "datafast_visitor_id=vis_abc; datafast_session_id=ses_xyz; other=nope";
     assert.deepEqual(datafastStripeMetadata(header), {
       datafast_visitor_id: "vis_abc",
       datafast_session_id: "ses_xyz",
@@ -27,5 +26,49 @@ describe("datafastStripeMetadata", () => {
   it("decodes a percent-encoded cookie value", () => {
     const header = "datafast_session_id=ses%2Fone";
     assert.equal(datafastStripeMetadata(header).datafast_session_id, "ses/one");
+  });
+});
+
+/**
+ * One live read per process: the module caches per instance, so a second call
+ * would be answered from that cache rather than from the stub. Asserting the
+ * whole request in a single pass is what that buys, and it is the part worth
+ * locking down — an earlier version read a paginated search total off the wrong
+ * endpoint and reported it as "visitors since launch".
+ */
+describe("datafastStats", () => {
+  it("reads realtime and overview, and tolerates both response shapes", async () => {
+    const calls: Array<{ url: string; auth: unknown }> = [];
+    const realFetch = globalThis.fetch;
+    const realKey = process.env.DATAFAST_API_KEY;
+
+    globalThis.fetch = (async (input: unknown, init: RequestInit | undefined) => {
+      const url = String(input);
+      calls.push({ url, auth: (init?.headers as Record<string, string>)?.authorization });
+      // DataFast answers with an object on some routes and a one-element array
+      // on others, and numbers sometimes arrive as strings.
+      const body = url.includes("/realtime") ? [{ visitors: 291 }] : { visitors: "1366929" };
+      return new Response(JSON.stringify(body), { status: 200 });
+    }) as typeof fetch;
+    process.env.DATAFAST_API_KEY = "df_test_key";
+
+    try {
+      const { datafastStats } = await import("./datafast.ts");
+      assert.deepEqual(await datafastStats(), { online: 291, visitors: 1366929 });
+
+      assert.equal(calls.length, 2);
+      assert.ok(calls.every((c) => c.auth === "Bearer df_test_key"));
+      assert.ok(calls.some((c) => c.url === "https://datafa.st/api/v1/analytics/realtime"));
+      const overview = calls.find((c) => c.url.includes("/analytics/overview"));
+      assert.ok(overview, "expected an overview read");
+      // A start date is required: the range default is undocumented, so without
+      // it "since launch" would be whatever window they happen to pick.
+      assert.match(overview.url, /startAt=\d{4}-\d{2}-\d{2}/);
+      assert.match(overview.url, /endAt=\d{4}-\d{2}-\d{2}/);
+    } finally {
+      globalThis.fetch = realFetch;
+      if (realKey === undefined) delete process.env.DATAFAST_API_KEY;
+      else process.env.DATAFAST_API_KEY = realKey;
+    }
   });
 });
