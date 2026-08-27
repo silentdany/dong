@@ -1,4 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { z } from "zod";
 import { BoardPage } from "@/components/board-page";
 import { getBoard, getLeader } from "@/lib/board";
 import { copy } from "@/lib/copy";
@@ -8,15 +9,11 @@ import { paidSearch } from "@/lib/search";
 import { boardJsonLd, jsonLdScript, seoHead } from "@/lib/seo";
 
 const searchSchema = paidSearch.extend({
-  board: paidSearch.shape.paid.innerType
-    ? undefined
-    : undefined,
+  board: z.enum(["today", "all"]).optional(),
 });
 
 export const Route = createFileRoute("/")({
-  validateSearch: paidSearch.extend({
-    board: (await import("zod")).z.enum(["today", "all"]).optional(),
-  } as never),
+  validateSearch: searchSchema,
   beforeLoad: ({ search }) => {
     if (search.board === "today") {
       throw redirect({
